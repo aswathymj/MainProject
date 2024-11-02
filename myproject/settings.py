@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-ok%0087ccz^@ycm*f16&1-y8qlg5q(ly&bks&7kl8%hc50em*k
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['projectmobicare.onrender.com','localhost','127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
