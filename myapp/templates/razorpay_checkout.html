@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        function initiatePayment() {
+            var options = {
+                "key": "rzp_test_zBIsMuxyHLhyB1", // Your Razorpay Key ID
+                "amount": "{{ amount|floatformat:2|floatformat }}", // Amount in paise
+                "currency": "{{ currency }}",
+                "name": "Your Company Name",
+                "description": "Service Request Payment",
+                "order_id": "{{ order_id }}", // The Razorpay Order ID generated from your server
+                "handler": function (response){
+                    // Handle successful payment here
+                    alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+
+                    // Optionally, you can send the payment details to your server
+                    fetch('/verify-payment/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for security
+                        },
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature
+                        })
+                    }).then(response => response.json())
+                      .then(data => {
+                          if (data.status === 'success') {
+                              alert("Payment verified successfully!");
+                              // Redirect or update UI based on success
+                          } else {
+                              alert("Payment verification failed.");
+                          }
+                      }).catch(error => {
+                          console.error('Error:', error);
+                          alert("An error occurred during payment verification.");
+                      });
+                },
+                "prefill": {
+                    "name": "{{ user.username }}",
+                    "email": "{{ user.email }}"
+                }
+            };
+
+            var paymentObject = new Razorpay(options);
+            paymentObject.open();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initiatePayment();
+        });
+        
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

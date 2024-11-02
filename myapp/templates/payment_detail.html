@@ -1,0 +1,345 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Details</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f1f3f6;
+        margin: 0;
+        padding: 0;
+    }
+
+    .navbar {
+        background-color: white;
+        border-bottom: 2px solid #0056b3;
+        padding: 15px 20px;
+    }
+
+    .navbar-brand img {
+        height: 51px;
+        width: auto;
+    }
+
+    .navbar-nav {
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar-nav .nav-item {
+        margin: 0 20px;
+    }
+
+    .navbar-nav .nav-link {
+        color: #0056b3;
+        font-weight: bold;
+        padding: 10px 0;
+    }
+
+    .navbar-nav .nav-link:hover {
+        color: #007bff;
+        text-decoration: underline;
+    }
+
+    .navbar .search-bar {
+        border-radius: 20px;
+        padding: 5px 15px;
+        background: #fff;
+        color: #007bff;
+        margin-left: auto;
+        width: 250px;
+    }
+
+    .navbar .cart-icon {
+        position: relative;
+    }
+
+    .navbar .cart-icon .badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: #ff0000;
+        color: #fff;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+    }
+    .navbar-nav .dropdown-menu {
+        min-width: 150px;
+    }
+
+</style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <img src="{% static 'images/logo.png' %}" alt="MobiCare Logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'index' %}">Home</a>
+                </li>
+                <li class="nav-item active">
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accessories' %}">Accessories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repair' %}">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#newsletter">Contact</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'view_cart' %}">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge">{{ cart_item_count }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">
+                        <i class="fa fa-user"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Payment Details</h1>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ payment.cart.product.name }}</h5>
+                <p class="card-text">Price: Rs {{ payment.cart.product.price }}</p>
+                <p class="card-text">Quantity: {{ payment.cart.quantity }}</p>
+                <p class="card-text">Total Amount: Rs {{ payment.amount }}</p>
+                <p class="card-text">Status: {{ payment.status }}</p>
+                <hr>
+                <h5 class="card-title">User Details</h5>
+                <p class="card-text">Name: {{ payment.cart.user.first_name }} {{ payment.cart.user.last_name }}</p>
+                <p class="card-text">Address: {{ payment.cart.user.address }}</p>
+                <p class="card-text">Phone Number: {{ payment.cart.user.phone }}</p>
+                <p class="card-text">PIN Number: {{ payment.cart.user.pincode }}</p>
+                <button class="btn btn-success mt-3" data-toggle="modal" data-target="#updateModal"
+                data-first-name="{{ payment.cart.user.first_name }}"
+                data-last-name="{{ payment.cart.user.last_name }}"
+                data-email="{{ payment.cart.user.email }}"
+                data-phone="{{ payment.cart.user.phone }}"
+                data-address="{{ payment.cart.user.address }}"
+                data-pincode="{{ payment.cart.user.pincode }}">
+            Update User Details
+        </button>
+        
+            </div>
+        </div>
+        <a href="{% url 'user_view' %}" class="btn btn-primary mt-3">Return to Home</a>
+        <button id="rzp-button1" class="btn btn-success mt-3">Proceed to Pay with Razorpay</button>
+        {% if payment.status == "Paid" %}
+        <a href="{% url 'download_receipt' payment.id %}" class="btn btn-info mt-3"> <i class="fas fa-download"></i>  Download Receipt</a>
+    {% endif %}
+    
+       <!-- <form action="{% url 'create_paypal_payment' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Proceed to Pay with PayPal</button>
+        </form>-->
+       
+
+    </div>
+
+    <!-- Modal for updating user details -->
+   <!-- Modal for updating user details -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel">Update User Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" class="form-control" id="first_name">
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" class="form-control" id="last_name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" class="form-control" id="phone">
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" class="form-control" id="address">
+                </div>
+                <div class="form-group">
+                    <label for="pincode">Pincode</label>
+                    <input type="text" class="form-control" id="pincode">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveChanges">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.getElementById('saveChanges').addEventListener('click', function() {
+            const data = {
+                first_name: document.getElementById('first_name').value,
+                last_name: document.getElementById('last_name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                pincode: document.getElementById('pincode').value
+            };
+
+            fetch('{% url "update_user_details" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: new URLSearchParams(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('User details updated successfully!');
+                    window.location.reload(); // Reload the page to reflect changes
+                } else {
+                    alert('An error occurred while updating user details.');
+                }
+            });
+        });
+        document.getElementById('rzp-button1').onclick = function(e) {
+            e.preventDefault();
+        
+            // Update status to "Paid" before opening Razorpay
+            fetch('{% url "update_payment_status" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: new URLSearchParams({
+                    'payment_id': '{{ payment.id }}',  // Pass the payment ID
+                    'status': 'Paid'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Proceed with opening Razorpay payment page
+                    fetch('{% url "create_payment" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: new URLSearchParams({
+                            'cart_id': '{{ payment.cart.id }}'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        var options = {
+                            "key": "{{ settings.RAZORPAY_KEY_ID }}",
+                            "amount": data.amount,
+                            "currency": "INR",
+                            "name": "MobiCare",
+                            "description": "Test Transaction",
+                            "order_id": data.order_id,
+                            "handler": function (response) {
+                                fetch('{% url "verify_payment" %}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                        'X-CSRFToken': '{{ csrf_token }}'
+                                    },
+                                    body: new URLSearchParams({
+                                        'payment_id': response.payment_id,
+                                        'order_id': response.order_id,
+                                        'razorpay_payment_id': response.razorpay_payment_id,
+                                        'razorpay_order_id': response.razorpay_order_id,
+                                        'razorpay_signature': response.razorpay_signature
+                                    })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.status === 'success') {
+                                        alert('Payment Successful!');
+                                        window.location.href = "{% url 'user_view' %}";
+                                    } else {
+                                       
+                                    }
+                                });
+                            },
+                            "prefill": {
+                                "name": "{{ payment.cart.user.first_name }} {{ payment.cart.user.last_name }}",
+                                "email": "{{ payment.cart.user.email }}",
+                                "contact": "{{ payment.cart.user.phone }}"
+                            },
+                            "theme": {
+                                "color": "#3399cc"
+                            }
+                        };
+                        var paymentObject = new Razorpay(options);
+                        paymentObject.open();
+                    });
+                } else {
+                    alert('Failed to update payment status.');
+                }
+            });
+        };
+        
+    
+        $('#updateModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var firstName = button.data('first-name');
+            var lastName = button.data('last-name');
+            var email = button.data('email');
+            var phone = button.data('phone');
+            var address = button.data('address');
+            var pincode = button.data('pincode');
+        
+            // Update the modal's content.
+            var modal = $(this);
+            modal.find('#first_name').val(firstName);
+            modal.find('#last_name').val(lastName);
+            modal.find('#email').val(email);
+            modal.find('#phone').val(phone);
+            modal.find('#address').val(address);
+            modal.find('#pincode').val(pincode);
+        });
+    </script>
+</body>
+</html>

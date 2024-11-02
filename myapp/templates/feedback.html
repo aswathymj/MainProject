@@ -1,0 +1,583 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <!-- meta data -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+
+  <!--font-family-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
+  
+  <!-- title of site -->
+  <title>MobiCare</title>
+
+  <!-- For favicon png -->
+  <link rel="shortcut icon" type="image/icon" href="{% static 'logo/favicon.png' %}">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/linearicons.css' %}">
+  <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+  <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/bootsnav.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- HTML5 shim and Respond.js for IE8 support -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <style>
+    /* General Styles */
+    body {
+        font-family: 'Tisa', serif;
+        background-color: #f8f9fa;
+        background-image: url("{% static 'images/blog/b4.jpg' %}");/
+        background-size: cover;
+        background-position: center;
+        background-repeat: repeat;
+        background-attachment: fixed;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .text-center {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    h1, h2 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+    /* General Navbar Styling */
+    .navbar {
+        background-color: white; /* Keeps the navbar background white */
+        border-bottom: 2px solid #ddd; /* Light border for separation */
+        padding: 20px 20px; /* Padding for better spacing */
+        position: -webkit-sticky; /* For Safari */
+        position: sticky; /* Sticky navbar */
+        top: 0; /* Stick the navbar at the top */
+        z-index: 1000; /* Ensure it stays above other content */
+    }
+    
+    .navbar-brand img {
+        height: 50px; /* Adjust logo height */
+        width: auto;
+        transition: transform 0.3s ease; /* Smooth transition for logo on hover */
+    }
+    
+    .navbar-brand img:hover {
+        transform: scale(1.1); /* Slightly enlarge the logo on hover */
+    }
+    
+    .navbar-nav {
+        display: flex;
+        align-items: center; /* Aligns items vertically in the center */
+    }
+    
+    .navbar-nav .nav-item {
+        margin: 0 30px; /* Increase space between navbar items */
+    }
+    
+    .navbar-nav .nav-link {
+        color: #333; /* Darker link color for better readability */
+        font-weight: 500; /* Semi-bold links */
+        padding: 8px 0; /* Adjusted padding */
+        transition: color 0.3s ease; /* Smooth color transition */
+    }
+    
+    .navbar-nav .nav-link:hover {
+        color: #007bff; /* Brighter color on hover */
+        text-decoration: none; /* Remove underline */
+        border-bottom: 2px solid #007bff; /* Add bottom border on hover */
+    }
+    
+    .navbar .search-bar {
+        border-radius: 20px; /* Rounded search bar */
+        padding: 5px 15px;
+        background: #f1f1f1; /* Light grey background */
+        color: #333; /* Darker text color */
+        margin-left: auto; /* Pushes search bar to the right */
+        width: 300px; /* Adjust width */
+        transition: background 0.3s ease, width 0.3s ease; /* Smooth transition */
+    }
+    
+    .navbar .search-bar:focus {
+        background: white; /* White background when focused */
+        width: 350px; /* Expand width on focus */
+    }
+    .navbar .cart-icon {
+        position: relative;
+    }
+
+    .navbar .cart-icon .badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: #ff0000;
+        color: #fff;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+    }
+
+    
+    .navbar .nav-item .fa-user {
+        color: #333; /* Icon color */
+        font-size: 1.2em; /* Larger user icon */
+        transition: color 0.3s ease; /* Smooth transition */
+    }
+    
+    .navbar .nav-item .fa-user:hover {
+        color: #007bff; /* Change color on hover */
+    }
+    
+    
+
+    /* Categories Section */
+    .category-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px; /* Reduced gap between categories */
+        padding: 20px;
+        background:linear-gradient(135deg, #ffffff, #f5f5f5); ;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .category-item {
+        text-align: center;
+        transition: transform 0.3s ease;
+        display: flex;
+        justify-content: center; /* Center content horizontally */
+        align-items: center; /* Center content vertically */
+    }
+    
+    .category-item img {
+        border-radius: 50%; /* Make image circular */
+        width: 100px; /* Adjust width */
+        height: 100px; /* Adjust height */
+        object-fit: cover; /* Ensure image covers the circle area */
+        background: transparent; /* No background color */
+        border: 2px solid #007bff; /* Optional: add a border color */
+    }
+    
+    .category-item:hover {
+        transform: scale(1.05);
+    }
+    
+    .category-item p {
+        margin-top: 10px;
+        font-weight: bold;
+        color: #007bff;
+    }
+    
+
+
+    /* Products Section */
+    .product-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    /* Products Section */
+    .product-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center items horizontally */
+        text-align: center; /* Center text inside the card */
+    }
+    
+    .product-item img {
+        width: 40%; /* Use 100% width of the card */
+        height: 200px; /* Fixed height */
+        object-fit: cover; /* Ensure image covers the area */
+        border-bottom: 1px solid #ddd; /* Optional: add a border below the image */
+    }
+    
+
+    .product-item:hover {
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
+        transform: scale(1.03);
+    }
+
+    .card-body {
+        padding: 7px;
+    }
+
+    .card-title {
+        font-size: 1.1em;
+        margin-bottom: 5px;
+        height: 60px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-text {
+        font-size: 0.9em;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+  /* Button Styles */
+  .btn {
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+}
+
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.navbar-nav .dropdown-menu {
+    min-width: 150px;
+}
+/* General Navbar Styling */
+.navbar-nav > li > a {
+    color: #333;
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: Sentencecase;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav > li > a:hover,
+.navbar-nav > li.active > a {
+    color: #007bff; /* Change this to your desired hover color */
+}
+
+/* Dropdown Menu Styling */
+.navbar-nav .dropdown-menu {
+    background-color: #fff; /* Dropdown background color */
+    border: 1px solid #ddd; /* Border for dropdown */
+    border-radius: 5px; /* Rounded corners for dropdown */
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1); /* Dropdown shadow */
+    margin-top: 10px;
+    padding: 10px 0;
+}
+
+/* Dropdown Menu Links */
+.navbar-nav .dropdown-menu > li > a {
+    color: #333;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar-nav .dropdown-menu > li > a:hover {
+    background-color: #f8f9fa; /* Background color on hover */
+    color: #007bff; /* Change this to your desired hover text color */
+}
+
+/* Caret Styling */
+.dropdown-toggle::after {
+    margin-left: 5px;
+    vertical-align: middle;
+    border-top: 4px solid #333; /* Arrow color */
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+
+/* Dropdown Menu Positioning */
+.navbar-nav .dropdown-menu {
+    min-width: 200px; /* Adjust this as needed */
+}
+
+.navbar-nav .dropdown:hover .dropdown-menu {
+    display: block; /* Show dropdown on hover */
+}
+
+/* Optional: Add a subtle transition effect for dropdown appearance */
+.navbar-nav .dropdown-menu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.product-item {
+    border: 1px solid blue; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 15px; /* Padding inside the card */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for 3D effect */
+    transition: box-shadow 0.3s ease; /* Smooth transition for hover effect */
+    background-color: #fff; /* White background color */
+}
+
+.product-item:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
+}
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@700&display=swap');
+
+.text-center {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text-center h1 {
+    font-family: 'Lora', serif; /* Elegant serif font */
+    font-size: 3rem; /* Larger size for emphasis */
+    font-weight: 700; /* Bold weight for prominence */
+    color: #333; /* Dark color for readability */
+    text-align: center; /* Centered text alignment */
+    position: relative;
+    margin: 20px 0; /* Margin for spacing */
+    padding-bottom: 20px; /* Padding for line position */
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    background: linear-gradient(135deg, #ff4500, #8b0000); /* Sunset orange to deep red gradient */
+    -webkit-background-clip: text; /* Apply gradient to text */
+    color: transparent; /* Hide the text color to show gradient */
+}
+.text-center h2 {
+    font-family: 'Lora', serif; /* Elegant serif font */
+    font-size: 3rem; /* Larger size for emphasis */
+    font-weight: 700; /* Bold weight for prominence */
+    color: #333; /* Dark color for readability */
+    text-align: center; /* Centered text alignment */
+    position: relative;
+    margin: 20px 0; /* Margin for spacing */
+    padding-bottom: 20px; /* Padding for line position */
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    background: linear-gradient(135deg, #ff4500, #8b0000); /* Sunset orange to deep red gradient */
+    -webkit-background-clip: text; /* Apply gradient to text */
+    color: transparent; /* Hide the text color to show gradient */
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+h2 {
+    text-align: center;
+    color: #4CAF50;
+    margin-bottom: 20px;
+}
+textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #45a049;
+}
+h2{
+    font-family: 'Forte', cursive; /* Use Forte font */
+    font-size: 3rem; /* Increase font size */
+    font-weight: normal; /* Set font weight to normal since Forte is already stylized */
+    color: blue; /* Change to a stylish color */
+    text-align: center; /* Center the text */
+    margin-bottom: 20px; /* Add space below the heading */
+    text-transform: uppercase; /* Transform to uppercase */
+    letter-spacing: 1px; /* Add letter spacing */
+    font-style: bold; /* Make the font italic */
+}
+
+
+.footer {
+    background-color: #f8f9fa; /* Light background for the footer */
+    padding: 20px 0; /* Vertical padding */
+    text-align: center; /* Centered text */
+    position: relative; /* To ensure the footer stays at the bottom */
+    bottom: 0;
+    width: 100%; /* Full width */
+}
+
+.footer-content {
+    max-width: 1200px; /* Maximum width for large screens */
+    margin: 0 auto; /* Centered content */
+}
+
+.footer-links {
+    margin-bottom: 10px; /* Space below the links */
+}
+
+.footer-links a {
+    color: #007bff; /* Link color */
+    padding: 10px 15px; /* Space around each link */
+    text-decoration: none; /* No underline */
+    font-weight: 500; /* Font weight */
+    transition: color 0.3s ease; /* Transition effect for hover */
+}
+
+.footer-links a:hover {
+    color: #0056b3; /* Darker color on hover */
+}
+
+.footer-copy {
+    font-size: 14px; /* Font size for copyright text */
+    color: #333; /* Text color */
+}
+
+  </style>
+</head>
+
+<body>
+    <!-- Start Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <img src="{% static 'images/logo.png' %}" alt="MobiCare Logo">
+        </a>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'user_view' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accessories' %}">Accessories</a>
+                </li>
+                <li class="dropdown scroll">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Services <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'repair' %}">Phone Repair</a></li>
+                        <li><a href="{% url 'repair_status' %}">Status</a></li>
+                       
+                        <!-- Add more service links as needed -->
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'feedback' %}">Feedback</a>
+                </li>
+                
+                <li class="search">
+                    <input type="text" id="search-bar" class="form-control search-bar" placeholder="Search Products...">
+                </li>
+                
+                <li class="search">
+                    <div class="input-group">
+                       
+                      
+                    </div>
+                </li>
+            </ul>
+            
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'view_cart' %}">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge">{{ cart_item_count }}</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'wishlist_view' %}" class="btn btn-secondary" title="View Wishlist">
+                        <i class="fas fa-heart"></i> 
+                    </a>
+                </li>
+            </ul>
+            
+        </div>
+        
+    </nav>
+    
+    <!-- End Navigation -->
+
+    <!-- Categories Section -->
+    <div class="container">
+
+<h2>Submit Feedback</h2>
+<form method="post" onsubmit="showThankYouMessage()">
+    {% csrf_token %}
+    <textarea name="message" placeholder="Your feedback..." required></textarea>
+    
+    <div>
+        <label for="emoji">Choose an emoji:</label>
+        <select name="emoji" id="emoji" required>
+            <option value="😊">😊</option>
+            <option value="😢">😢</option>
+            <option value="😡">😡</option>
+            <option value="👍">👍</option>
+            <option value="👎">👎</option>
+        </select>
+    </div>
+    
+    <button type="submit">Submit Feedback</button>
+</form>
+
+</body>
+</html>
+<script>
+    function showThankYouMessage() {
+        alert('Thank you for your feedback!');
+    }
+</script>

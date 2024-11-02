@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Submitted</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .success-message {
+            color: green;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+
+<h1 class="success-message">Thank you for your feedback!</h1>
+<p>Your feedback has been successfully submitted.</p>
+<a href="{% url 'feedback' %}">Submit another feedback</a> | 
+<a href="{% url 'feedback_list' %}">View all feedback</a>
+
+</body>
+</html>

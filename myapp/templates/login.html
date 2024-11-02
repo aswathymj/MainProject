@@ -1,0 +1,510 @@
+{% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Registration Form</title>
+    <link rel="stylesheet" href="{% static 'css/loginstyle.css' %}">
+    <!-- Correct FontAwesome CDN link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        body {
+            background-image: url("{% static 'images/blog/b4.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Poppins', sans-serif;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 100%;
+            text-align: left;
+        }
+        /* CSS for the Google OAuth button */
+        .google-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            color: black;
+            max-width: 300px;
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .google-button:hover {
+            background-color: #f5f5f5; /* Darker shade of Google red on hover */
+        }
+        .or {
+            margin: 0 8px; /* Adjust spacing around 'or' text */
+            color: #888; /* Example color */
+        }
+        .separator {
+            text-align: center;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .separator::before, .separator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .separator::before {
+            left: 0;
+        }
+
+        .separator::after {
+            right: 0;
+        }
+
+        .form-content .input-box input {
+            height: 40px;
+            width: 100%;
+            outline: none;
+            border: none;
+            padding: 0 30px;
+            font-size: 16px;
+            font-weight: 500;
+            border-bottom: 2px solid rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        /* Ensure FontAwesome icons are correctly aligned */
+        .input-box i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .input-box input{
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-box input {
+            padding-left: 40px; /* Adjust padding to accommodate icon */
+        }
+        .alert {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #333;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px 10px;
+    width: 90%;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #bee5eb;
+}
+.alert {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #72edf2, #5151e5);
+    border-radius: 8px;
+    padding: 8px 20px;
+    width: 85%;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0.95;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #b0f4e6, #0b8a7d);
+    color: #ffffff;
+}
+
+.alert-error {
+    background: linear-gradient(135deg, #fcb69f, #f76b1c);
+    color: #ffffff;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #ffe084, #ff9a00);
+    color: #ffffff;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #a0e7f9, #34b3e5);
+    color: #ffffff;
+}
+
+.alert::before {
+    content: "\f06a";
+    font-family: "FontAwesome";
+    margin-right: 8px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.alert-success::before {
+    content: "\f058";
+}
+
+.alert-error::before {
+    content: "\f071";
+}
+
+.alert-warning::before {
+    content: "\f06d";
+}
+
+.alert-info::before {
+    content: "\f05a";
+}
+.forgot-password {
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+.forgot-password a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+    color: #0056b3;
+}
+
+    </style>
+</head>
+<body>
+ 
+    <div class="container">
+        <input type="checkbox" id="flip">
+        <div class="cover">
+            <div class="front">
+                <img src="{% static 'images/collection/l.jpg' %}" alt="">
+            </div>
+            <div class="back">
+                <div class="text">
+                    <span class="text-1">Complete miles of journey <br> with one step</span>
+                    <span class="text-2">Let's get started</span>
+                </div>
+            </div>
+        </div>
+        {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+        <div class="forms">
+            <div class="form-content">
+                <div class="login-form">
+                    <div class="title">Login</div>
+                    <br>
+                    <form id="loginForm" method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="input-boxes">
+                            <div class="input-box">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" placeholder="Enter your email" name="semail" required>
+                                <span id="loginEmailError" class="error"></span>
+                            </div>
+                            <div class="input-box">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" placeholder="Enter your password" name="spassword" required>
+                                <span id="loginPasswordError" class="error"></span>
+                            </div>
+                            <div class="forgot-password">
+                                <a href="{% url 'forgot_password' %}">Forgot Password?</a>
+                            </div>
+                            <div class="button input-box">
+                                <input type="submit" value="Submit">
+                            </div>
+                            <div class="text sign-up-text">Don't have an account? <label for="flip">Signup now</label></div>
+                            
+                        </div>
+                    </form>
+                    <div class="separator">or</div>
+                    <!-- Continue with Google button -->
+                    <a href="{% provider_login_url 'google' %}" class="google-button">Continue with Google</a>
+                </div>
+                <div class="signup-form">
+                    <div class="title">Signup</div>
+                    <form id="signupForm" method="post" action="{% url 'register' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="input-boxes">
+                            <div class="input-box">
+                                <i class="fas fa-user"></i>
+                                <input type="text" placeholder="Enter your name" name="name" required>
+                                <span id="nameError" class="error"></span>
+                            </div><br>
+                            <div class="input-box">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" placeholder="Enter your email" name="email" required>
+                                <span id="emailError" class="error"></span>
+                            </div><br>
+                            <div class="input-box">
+                                <i class="fas fa-phone"></i>
+                                <input type="tel" placeholder="Enter your phone number" name="phone" pattern="[789][0-9]{9}" title="Please enter a valid 10-digit Indian phone number starting with 7, 8, or 9" required>
+                                <span id="phoneError" class="error"></span>
+                            </div><br>
+                            <div class="input-box">
+                                <i class="fas fa-address-card"></i>
+                                <input type="text" placeholder="Enter your address" name="address" required><br>
+                                <span id="addressError" class="error"></span>
+                            </div><br>
+                            <div class="input-box">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" placeholder="Enter your password" name="password" id="password" required>
+                                <span id="passwordError" class="error"></span>
+                            </div>
+                            <div class="select-box">
+                                <i class=""></i>
+                                <select name="role" required>
+                                    <option value="">Select your role</option>
+                                    <option value="user">User</option>
+                                    <option value="technician">Technician</option>
+                                </select>
+                                <span id="roleError" class="error"></span>
+                            </div>
+                            <div class="input-box" id="qualificationBox" style="display: none;">
+                                <i class="fas fa-file-pdf"></i>
+                                <input type="file" id="qualification" name="qualification" accept=".pdf">
+                                <span id="qualificationError" class="error"></span>
+                            </div>
+                            <div class="button input-box">
+                                <input type="submit" value="Submit">
+                            </div>
+                            <div class="text sign-up-text">Already have an account? <label for="flip">Login now</label></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // jQuery for dynamic form validation
+        $(document).ready(function() {
+            // Login form validation on input change
+            $('input[name="semail"]').on('input', function() {
+                var email = $(this).val().trim();
+                if (email === "") {
+                    $('#loginEmailError').text("Email is required");
+                } else {
+                    $('#loginEmailError').text("");
+                }
+            });
+
+            $('input[name="spassword"]').on('input', function() {
+                var password = $(this).val().trim();
+                if (password === "") {
+                    $('#loginPasswordError').text("Password is required");
+                } else {
+                    $('#loginPasswordError').text("");
+                }
+            });
+
+            // Signup form validation on input change
+            $('input[name="name"]').on('input', function() {
+                var name = $(this).val().trim();
+                var namePattern = /^[A-Za-z\s]+$/;
+                if (name === "") {
+                    $('#nameError').text("Name is required");
+                } else if (!namePattern.test(name)) {
+                    $('#nameError').text("Name can only contain letters and spaces");
+                } else {
+                    $('#nameError').text("");
+                }
+            });
+
+            $('input[name="email"]').on('input', function() {
+                var email = $(this).val().trim();
+                var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (email === "") {
+                    $('#emailError').text("Email is required");
+                } else if (!emailPattern.test(email)) {
+                    $('#emailError').text("Please enter a valid email address");
+                } else {
+                    $('#emailError').text("");
+                }
+            });
+
+            $('input[name="phone"]').on('input', function() {
+                var phone = $(this).val().trim();
+                var phonePattern = /^[789]\d{9}$/;
+                if (phone === "") {
+                    $('#phoneError').text("Phone number is required");
+                } else if (!phonePattern.test(phone)) {
+                    $('#phoneError').text("Please enter a valid 10-digit Indian phone number starting with 7, 8, or 9");
+                } else {
+                    $('#phoneError').text("");
+                }
+            });
+
+            $('input[name="address"]').on('input', function() {
+                var address = $(this).val().trim();
+                var addressPattern = /^[a-zA-Z0-9\s.,#-]{5,}$/;
+                if (address === "") {
+                    $('#addressError').text("Address is required");
+                } else if (!addressPattern.test(address)) {
+                    $('#addressError').text("Address should be at least 5 characters long");
+                } else {
+                    $('#addressError').text("");
+                }
+            });
+
+            $('input[name="password"]').on('input', function() {
+                var password = $(this).val().trim();
+                var passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
+                if (password === "") {
+                    $('#passwordError').text("Password is required");
+                } else if (!passwordPattern.test(password)) {
+                    $('#passwordError').text("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number");
+                } else {
+                    $('#passwordError').text("");
+                }
+            });
+
+            $('select[name="role"]').on('change', function() {
+                var role = $(this).val().trim();
+                if (role === "") {
+                    $('#roleError').text("Role is required");
+                } else {
+                    $('#roleError').text("");
+                }
+            });
+
+            // Form submission validation
+            $('#signupForm').on('submit', function(e) {
+                var valid = true;
+                var fields = ['name', 'email', 'phone', 'address', 'password'];
+                var roles = $('select[name="role"]');
+                fields.forEach(function(field) {
+                    var input = $('input[name="' + field + '"]');
+                    if (input.val().trim() === "") {
+                        $('#' + field + 'Error').text("This field is required");
+                        valid = false;
+                    }
+                });
+                if (roles.val().trim() === "") {
+                    $('#roleError').text("Role is required");
+                    valid = false;
+                }
+                if (!valid) {
+                    e.preventDefault();
+                }
+            });
+        });
+        $('select[name="role"]').on('change', function() {
+            var role = $(this).val().trim();
+            if (role === "technician") {
+                $('#qualificationBox').show();
+            } else {
+                $('#qualificationBox').hide();
+                $('#qualification').val(''); // Clear the file input if not a technician
+                $('#qualificationError').text('');
+            }
+        });
+    
+        // Validate the qualification field on file input change
+        $('#qualification').on('change', function() {
+            var file = $(this).get(0).files[0];
+            if (file) {
+                var fileType = file.type;
+                if (fileType !== 'application/pdf') {
+                    $('#qualificationError').text("Only PDF files are allowed.");
+                } else {
+                    $('#qualificationError').text("");
+                }
+            }
+        });
+    
+        // Form submission validation
+        $('#signupForm').on('submit', function(e) {
+            var valid = true;
+            var fields = ['name', 'email', 'phone', 'address', 'password'];
+            var roles = $('select[name="role"]');
+            fields.forEach(function(field) {
+                var input = $('input[name="' + field + '"]');
+                if (input.val().trim() === "") {
+                    $('#' + field + 'Error').text("This field is required");
+                    valid = false;
+                }
+            });
+            if (roles.val().trim() === "") {
+                $('#roleError').text("Role is required");
+                valid = false;
+            }
+            if (roles.val().trim() === "technician") {
+                var qualificationFile = $('#qualification').get(0).files[0];
+                if (!qualificationFile) {
+                    $('#qualificationError').text("Qualification document is required");
+                    valid = false;
+                } else if (qualificationFile.type !== 'application/pdf') {
+                    $('#qualificationError').text("Only PDF files are allowed.");
+                    valid = false;
+                }
+            }
+            if (!valid) {
+                e.preventDefault();
+            }
+        });
+    
+    </script>
+</body>
+</html>

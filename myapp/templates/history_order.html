@@ -1,0 +1,465 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color:black;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    
+        h2 {
+            font-family: 'Arial', sans-serif;
+            color:white;
+            margin-bottom: 30px;
+        }
+    
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: black;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+    
+        .table thead {
+            background-color: white;
+            color: black;
+        }
+    
+        .table th, .table td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+    
+        .table th {
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+    
+        .table td {
+            font-family: 'Arial', sans-serif;
+            color:white;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+    
+        .table td img {
+            border-radius: 8px;
+            object-fit: cover;
+        }
+    
+        .table tr {
+            border-bottom: 1px solid #ddd;
+        }
+    
+        .table tr:last-child {
+            border-bottom: none;
+        }
+    
+       
+    
+        .status-pending {
+            color: #ffc107;
+        }
+    
+        .status-approved {
+            color: #28a745;
+        }
+    
+        .status-on_working {
+            color: #17a2b8;
+        }
+    
+        .status-completed {
+            color: #28a745;
+            font-weight: bold;
+        }
+    
+        .d-flex {
+            display: flex;
+            align-items: center;
+        }
+    
+        .d-flex div {
+            margin-left: 10px;
+        }
+    
+        .user-details {
+            font-family: 'Arial', sans-serif;
+            margin-bottom: 20px;
+        }
+    
+        .user-details strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .logo-text {
+            font-size: 24px;
+            color: #fff;
+            font-weight: bold;
+        }
+        .nav-link.btn.btn-danger {
+            color: #fff;
+            background-color: black; /* Bootstrap's danger color */
+            border: none;
+        }
+        .nav-link.btn.btn-danger:hover {
+            background-color: #c82333; /* Darker shade for hover effect */
+        }
+        .count-card {
+            width: 250px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color:black;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            margin: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+            text-align: center;
+            transition: transform 0.3s ease-in-out; /* Smooth scaling on hover */
+        }
+        .count-card h3 {
+            font-size: 18px;
+            color:white; /* Dark color for the heading */
+            margin-bottom: 6px;
+        }
+        .count-card i {
+            font-size: 36px;
+            color: #007bff; /* Primary color for the icon */
+            margin-bottom: 10px;
+        }
+        .count-card .count-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745; /* Success color for the count */
+        }
+        .count-card:hover {
+            transform: scale(1.05); /* Slightly enlarge on hover */
+        }
+        .counts-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        /* Custom table styling for a professional look */
+        .table {
+            background-color: ;
+            border: 1px solid #dee2e6;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .table th, .table td {
+            padding: 15px;
+            vertical-align: middle;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .table thead th {
+            background-color: #343a40;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .table td
+        
+    </style>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Admin</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="{% static '/assets/vendors/mdi/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{% static '/assets/vendors/css/vendor.bundle.base.css' %}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{% static '/assets/vendors/jvectormap/jquery-jvectormap.css' %}">
+    <link rel="stylesheet" href="{% static '/assets/vendors/flag-icon-css/css/flag-icon.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.theme.default.min.css' %}">
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="assets/images/favicon.png" />
+</head>
+<body>
+    <div class="container-scroller">
+        <!-- partial:partials/_sidebar.html -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+                <span class="logo-text">Mobicare</span>
+            </div>
+            <ul class="nav">
+                <li class="nav-item profile">
+                    <div class="profile-desc">
+                        <div class="profile-pic"></div>
+                        <a href="#" id="profile-dropdown" data-toggle="dropdown"></a>
+                        <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
+                            <a href="#" class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-dark rounded-circle"></div>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item preview-item"></a>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item nav-category">
+                    <span class="nav-link">Navigation</span>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'admin_view' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-speedometer"></i>
+                        </span>
+                        <span class="menu-title">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#category-menu" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-laptop"></i>
+                        </span>
+                        <span class="menu-title">Category</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="category-menu">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'add_category' %}">Add Category</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'view_category' %}">View Category</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#subcategory-menu" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-laptop"></i>
+                        </span>
+                        <span class="menu-title">Sub Category</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="subcategory-menu">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'add_subcategory' %}">Add Sub Category</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'view_subcategory' %}">View Sub Category</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#product-menu" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-playlist-play"></i>
+                        </span>
+                        <span class="menu-title">Product</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="product-menu">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'add_product' %}">Add Product</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'view_product' %}">View Product</a></li>
+                        </ul>
+                    </div>
+                </li>
+              
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'manage_technicians' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-account-multiple"></i>
+                        </span>
+                        <span class="menu-title">Manage Technicians</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'history_order' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-account-multiple"></i>
+                        </span>
+                        <span class="menu-title">Manage Orders</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'service_requests_list' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-account-multiple"></i>
+                        </span>
+                        <span class="menu-title">Manage Service Requests</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'feedback_list' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-account-multiple"></i>
+                        </span>
+                        <span class="menu-title">Manage Feedback</span>
+                    </a>
+                </li>
+           
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="http://www.bootstrapdash.com/demo/corona-free/jquery/documentation/documentation.html">
+                    </a>
+                </li>
+                <li class="nav-item nav-logout d-none d-lg-block">
+                </li>
+            </ul>
+        </nav>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:partials/_navbar.html -->
+            <nav class="navbar p-0 fixed-top d-flex flex-row">
+                <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
+                    <a class="navbar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
+                </div>
+                <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+                    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                        <span class="mdi mdi-menu"></span>
+                    </button>
+                    <ul class="navbar-nav w-100">
+                        <li class="nav-item w-100">
+                            <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
+                                
+                            </form>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav navbar-nav-right">
+                        <li class="nav-item dropdown d-none d-lg-block">
+                            
+                        </li>
+                        <li class="nav-item nav-settings d-none d-lg-block">
+                            <a class="nav-link" href="#">
+                                <i class="mdi mdi-view-grid"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown border-left">
+                            <a class="nav-link count-indicator dropdown-toggle" id="messageDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+                             
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+                                <h6 class="p-3 mb-0">Messages</h6>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown border-left">
+                            <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
+                                
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+                                <h6 class="p-3 mb-0">Notifications</h6>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
+                                <div class="navbar-profile">
+                                    
+                                    <p class="mb-0 d-none d-sm-block navbar-profile-name">{{ username }}</p>
+                                    <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
+                                
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item preview-item" href="{% url 'logout' %}">
+                                    <div class="preview-thumbnail">
+                                        <div class="preview-icon bg-dark rounded-circle">
+                                            <i class="mdi mdi-logout text-danger"></i>
+                                        </div>
+                                    </div>
+                                    <div class="preview-item-content">
+                                        <p class="preview-subject mb-1">Log out</p>
+                                    </div>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        </li>
+                    </ul>
+                    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                        <span class="mdi mdi-menu"></span>
+                    </button>
+                </div>
+            </nav>
+            <!-- partial -->
+         <!-- partial -->
+<!-- partial -->
+<div class="main-panel">
+    <div class="content-wrapper">
+       
+            <h2 class="text-center mb-4">Order History</h2>
+
+            <!-- Full-width table -->
+            <table class="table table-bordered table-hover table-responsive-sm table-striped w-100">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Product Details</th>
+                        <th>User Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr class="status-{{ payment.status|lower }}">
+                        <td>{{ payment.created_at|date:"d M, Y H:i" }}</td>
+                        <td>
+                            <span class="badge badge-{{ payment.status|lower }}">{{ payment.status }}</span>
+                        </td>
+                        <td>Rs.{{ payment.amount }}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="{{ payment.cart.product.image.url }}" alt="{{ payment.cart.product.name }}" style="width:50px; height:50px; margin-right:15px; border-radius:5px;">
+                                <div>
+                                    <strong>{{ payment.cart.product.name }}</strong><br><br>
+                                    <small>{{ payment.cart.product.description|truncatewords:10 }}</small><br><br>
+                                    <strong>Price:</strong> Rs.{{ payment.cart.product.price }}<br><br>
+                                    <strong>Quantity:</strong> {{ payment.cart.quantity }}<br><br>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <strong>{{ payment.cart.user.username }}</strong><br><br>
+                            <small>Address: {{ payment.cart.user.address }}</small><br><br>
+                            <small>Phone: {{ payment.cart.user.phone }}</small>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No orders found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

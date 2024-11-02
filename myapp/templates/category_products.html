@@ -1,0 +1,63 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <style>
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .product-item {
+            text-align: center;
+            margin: 10px;
+            width: 150px; /* Adjust as needed */
+        }
+        .product-item a {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+        .product-item img {
+            width: 100px; /* Adjust as needed */
+            height: 100px; /* Adjust as needed */
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .product-item img:hover {
+            transform: scale(1.1); /* Example of scaling effect on hover */
+        }
+        .product-item p {
+            margin-top: 10px;
+        }
+        .text-center {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="text-center" style="padding: 20px;">
+            <h1>{{ category.name }} Products</h1>
+        </div>
+        <div class="product-list">
+            {% for product in products %}
+            <div class="product-item">
+                <a href="#">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    <p>{{ product.name }}</p>
+                    <p>${{ product.price }}</p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        
+    </div>
+</body>
+
+</html>
