@@ -1,0 +1,430 @@
+{% load static  %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Delivery Boy</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background-color: #f4f7fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .main-panel {
+            margin-top: 50px;
+        }
+        .page-header {
+            border-bottom: 2px solid #007bff;
+            margin-bottom: 30px;
+        }
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .card-body {
+            padding: 40px;
+        }
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+        }
+        .form-control {
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            padding: 12px;
+            font-size: 1rem;
+        }
+        .btn {
+            padding: 8px 10px; /* Smaller padding to make the button square */
+            font-size: 1rem;   /* Adjust font size */
+            border-radius: 4px; /* Slightly rounded edges */
+            width: auto;
+            height: 40px;      /* Equal height and width to make it square */
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-secondary {
+            color: #007bff;
+            background-color: transparent;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-secondary:hover {
+            color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            color: #fff;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+        .messages {
+            list-style-type: none;
+            padding: 0;
+        }
+        .messages li {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .messages li.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .messages li.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .view-icon {
+            font-size: 1.5rem;
+            color: #007bff;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .view-icon:hover {
+            color: #0056b3;
+        }
+    </style>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Admin</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{% static 'assets/vendors/jvectormap/jquery-jvectormap.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/flag-icon-css/css/flag-icon.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/owl-carousel-2/owl.theme.default.min.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="{% static 'assets/images/favicon.png' %}">
+</head>
+<body>
+    <div class="container-scroller">
+        <!-- partial:partials/_sidebar.html -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+                <span class="logo-text">Mobicare</span>
+            </div>
+            <ul class="nav">
+                <li class="nav-item profile">
+                    <div class="profile-desc">
+                        <div class="profile-pic"></div>
+                        <a href="#" id="profile-dropdown" data-toggle="dropdown"></a>
+                        <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
+                            <a href="#" class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-dark rounded-circle"></div>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item preview-item"></a>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item nav-category">
+                    <span class="nav-link">Navigation</span>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'admin_view' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-speedometer"></i>
+                        </span>
+                        <span class="menu-title">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#category-menu" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-laptop"></i>
+                        </span>
+                        <span class="menu-title">Category</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="category-menu">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'add_category' %}">Add Category</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'view_category' %}">View Category</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#subcategory-menu" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-laptop"></i>
+                        </span>
+                        <span class="menu-title">Sub Category</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="subcategory-menu">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'add_subcategory' %}">Add Sub Category</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'view_subcategory' %}">View Sub Category</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" data-toggle="collapse" href="#product-menu" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-playlist-play"></i>
+                        </span>
+                        <span class="menu-title">Product</span>
+                        <i class="menu-arrow"></i>
+                    </a>
+                    <div class="collapse" id="product-menu">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'add_product' %}">Add Product</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{% url 'view_product' %}">View Product</a></li>
+                        </ul>
+                    </div>
+                </li>
+              
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'manage_technicians' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-account-multiple"></i>
+                        </span>
+                        <span class="menu-title">Manage Technicians</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'history_order' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-account-multiple"></i>
+                        </span>
+                        <span class="menu-title">Manage Orders</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'service_requests_list' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-account-multiple"></i>
+                        </span>
+                        <span class="menu-title">Manage Service Requests</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'manage_device_specialists' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-account-multiple"></i>
+                        </span>
+                        <span class="menu-title">Manage Device Specialist</span>
+                    </a>
+                </li>
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'manage_delivery_boys' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-account-multiple"></i>
+                        </span>
+                        <span class="menu-title">Manage Delivery Boy</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="{% url 'feedback_list' %}">
+                        <span class="menu-icon">
+                            <i class="mdi mdi-account-multiple"></i>
+                        </span>
+                        <span class="menu-title">Manage Feedback</span>
+                    </a>
+                </li>
+           
+                <li class="nav-item menu-items">
+                    <a class="nav-link" href="http://www.bootstrapdash.com/demo/corona-free/jquery/documentation/documentation.html">
+                    </a>
+                </li>
+                <li class="nav-item nav-logout d-none d-lg-block">
+                </li>
+            </ul>
+        </nav>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:partials/_navbar.html -->
+            <nav class="navbar p-0 fixed-top d-flex flex-row">
+                <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
+                    <a class="navbar-brand brand-logo-mini" href="index.html"><img src="{% static 'assets/images/logo-mini.svg' %}" alt="logo"></a>
+                </div>
+                <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+                    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                        <span class="mdi mdi-menu"></span>
+                    </button>
+                    <ul class="navbar-nav w-100">
+                        <li class="nav-item w-100">
+                            <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
+                                <input type="text" class="form-control" placeholder="Search products">
+                            </form>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav navbar-nav-right">
+                        <!-- Navbar content omitted for brevity -->
+                    </ul>
+                </div>
+            </nav>
+            <div class="main-panel">
+           
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h3 class="page-title">Assign Delivery Agent</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-6 grid-margin stretch-card mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Assign Area to {{ delivery_boy.username }}</h4>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="form-group mb-4">
+                                    <label for="assigned_area">Assign Area/Pincode</label>
+                                    <select class="form-control pincode-select" name="assigned_area" required>
+                                        <option value="">Select Pincode</option>
+                                        <optgroup label="Kottayam">
+                                            <option value="686001">686001 - Kottayam</option>
+                                            <option value="686002">686002 - Nagampadam</option>
+                                            <option value="686003">686003 - Kumarakom</option>
+                                            <option value="686004">686004 - Ettumanoor</option>
+                                            <option value="686005">686005 - Puthuppally</option>
+                                            <option value="686006">686006 - Changanassery</option>
+                                            <option value="686007">686007 - Pampady</option>
+                                        </optgroup>
+                                        <optgroup label="Pathanamthitta">
+                                            <option value="689645">689645 - Pathanamthitta Town</option>
+                                            <option value="689646">689646 - Thiruvalla</option>
+                                            <option value="686511">686511 - Ranni</option>
+                                            <option value="689648">689648 - Pandalam</option>
+                                            <option value="689649">689649 - Konni</option>
+                                        </optgroup>
+                                    </select>
+                                   
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <button type="submit" class="btn btn-primary">Assign</button>
+                                        <a href="{% url 'manage_delivery_boys' %}" class="btn btn-secondary ms-2">Cancel</a>
+                                    </div>
+                                    <button type="button" class="btn btn-info ms" onclick="viewPincodeDetails()"><i class="bi bi-eye"></i></button>
+                                </div>
+                                
+                            </form>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+               <div id="deliveryBoyTableContainer" class="mt-4" style="display: none;">
+    <h5 class="mb-3 text-primary">Delivery Agent Details</h5>
+    <div class="table-responsive">
+        <table id="deliveryBoyTable" class="table table-hover table-striped table-bordered align-middle">
+            <thead class="table-primary">
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Assigned Pincode</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script>
+        function viewPincodeDetails() {
+            const selectedPincode = document.querySelector('.pincode-select').value;
+            if (selectedPincode) {
+                alert(`Viewing details for pincode: ${selectedPincode}`);
+            } else {
+                alert('Please select a pincode first.');
+            }
+        }
+    </script>
+    <script>
+        function viewPincodeDetails() {
+            // Fetch all delivery boy details
+            fetch('/get_all_delivery_boy_details/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Get the table body element
+                        const tableBody = document.querySelector("#deliveryBoyTable tbody");
+                        tableBody.innerHTML = ""; // Clear previous rows
+    
+                        // Populate table with new data
+                        data.data.forEach(boy => {
+                            const row = `
+                                <tr>
+                                    <td>${boy.username}</td>
+                                    <td>${boy.email}</td>
+                                    <td>${boy.phone}</td>
+                                    <td>${boy.assigned_area}</td>
+                                    <td>${boy.status}</td>
+                                </tr>
+                            `;
+                            tableBody.innerHTML += row;
+                        });
+    
+                        // Show the table container
+                        document.getElementById("deliveryBoyTableContainer").style.display = "block";
+                    } else {
+                        alert(data.error || "Failed to fetch details.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred while fetching data.");
+                });
+        }
+    </script>
+    
+    
+    
+</body>
+</html>

@@ -473,6 +473,113 @@
 #productList {
     display: none; /* Hide product list initially */
 }
+/* General styles for order status */
+td.order-status {
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+/* Specific styles for each order status */
+td.order-status.order-confirmed {
+    background-color: #d4edda; /* Light green */
+    color: #155724;           /* Dark green text */
+    border: 1px solid #c3e6cb;
+}
+
+td.order-status.active {
+    background-color: #d1ecf1; /* Light blue */
+    color: #0c5460;           /* Dark blue text */
+    border: 1px solid #bee5eb;
+}
+
+td.order-status.inactive {
+    background-color: #f8d7da; /* Light red */
+    color: #721c24;           /* Dark red text */
+    border: 1px solid #f5c6cb;
+}
+/* Custom Styling */
+.order-history-heading {
+  
+    color: black;
+    padding: 15px;
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    border-radius: 10px;
+    font-family: 'Cormorant Garamond', serif;
+   
+}
+
+.order-history-table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-history-table thead {
+    background-color: #343a40;
+    color: white;
+}
+
+.order-history-table tbody tr {
+    transition: all 0.3s ease-in-out;
+}
+
+.order-history-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.01);
+}
+
+.order-status {
+    font-weight: bold;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Status Colors */
+.order-status.pending {
+    background-color: #ffc;107
+    color: #000;
+}
+
+.order-status.completed {
+    background-color: #28a745;
+    color: white;
+}
+
+.order-status.cancelled {
+    background-color: #dc3545;
+    color: white;
+}
+
+.product-details {
+    display: flex;
+    align-items: center;
+}
+
+.product-details img {
+    border-radius: 5px;
+    margin-right: 15px;
+    object-fit: cover;
+}
+
+.text-center h1 {
+    font-family: 'Forte', cursive; /* Use Forte font */
+    font-size: 3rem; /* Increase font size */
+    font-weight: normal; /* Set font weight to normal since Forte is already stylized */
+    color: brown; /* Change to a stylish color */
+    text-align: center; /* Center the text */
+    margin-bottom: 20px; /* Add space below the heading */
+    text-transform: uppercase; /* Transform to uppercase */
+    letter-spacing: 1px; /* Add letter spacing */
+    font-style: bold; /* Make the font italic */
+}
   </style>
 </head>
 
@@ -557,45 +664,115 @@
 
 
 
-    <div class="container mt-5">
-        <h2 class="text-center">Order History</h2>
-    
-        <table class="table order-history-table">
+    <div class="container mt-9">
+        <div class="text-center">
+            <h1>Order History</h1>
+        </div>
+
+        <table class="table table-hover order-history-table mt-4">
             <thead>
                 <tr>
-                    <th>Order ID</th>
+                  
                     <th>Date</th>
-                    <th>Status</th>
+                    <th>Payment Status</th>
                     <th>Amount</th>
                     <th>Product Details</th>
+                    <th>Order Status</th>
+                    <th>Delivery OTP</th>
+                    <th>Delivered Date</th>
+                    <th>Delivered Date</th>
                 </tr>
             </thead>
             <tbody>
                 {% for payment in payments %}
-                <tr class="status-{{ payment.status|lower }}">
-                    <td>{{ payment.id }}</td>
+                <tr>
+                 
                     <td>{{ payment.created_at|date:"d M, Y H:i" }}</td>
                     <td>{{ payment.status }}</td>
-                    <td>${{ payment.amount }}</td>
+                    <td>Rs.{{ payment.amount }}</td>
                     <td>
-                        <div class="d-flex align-items-center">
-                            <img src="{{ payment.cart.product.image.url }}" alt="{{ payment.cart.product.name }}" style="width:50px; height:50px; margin-right:15px;">
+                        <div class="product-details">
+                            <img src="{{ payment.cart.product.image.url }}" alt="{{ payment.cart.product.name }}" style="width: 50px; height: 50px;">
                             <div>
                                 <strong>{{ payment.cart.product.name }}</strong><br>
                                 <small>{{ payment.cart.product.description|truncatewords:10 }}</small><br>
-                                <strong>Price:</strong> ${{ payment.cart.product.price }}<br>
+                                <strong>Price:</strong> Rs.{{ payment.cart.product.price }}<br>
                                 <strong>Quantity:</strong> {{ payment.cart.quantity }}
                             </div>
                         </div>
                     </td>
+                    <td class="order-status {{ payment.order_status|lower }}">{{ payment.order_status }}</td>
+                    <td>
+                        {% if payment.order_status == "Out of Delivery" %}
+                            <strong>{{ payment.otp }}</strong>
+                        {% else %}
+                            <span>N/A</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ payment.delivered_at }}</td>
+                      <td>
+                        <button onclick="sendLocation({{ payment.id }})">Share My Location</button>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center">No orders found.</td>
+                    <td colspan="6" class="text-center text-muted">No orders found.</td>
                 </tr>
+              
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    <script>
+        function sendLocation(paymentId) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+        
+                    // Send location data to Django
+                    fetch('/update-location/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCSRFToken() // Function to get CSRF token
+                        },
+                        body: JSON.stringify({
+                            payment_id: paymentId,
+                            latitude: latitude,
+                            longitude: longitude
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Location shared successfully!");
+                        } else {
+                            alert("Failed to share location.");
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                }, function(error) {
+                    alert("Unable to retrieve location. Please allow location access.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+        
+        // Function to get CSRF token from cookies
+        function getCSRFToken() {
+            let cookieValue = null;
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+                    break;
+                }
+            }
+            return cookieValue;
+        }
+        </script>
+        
 </body>
 </html>

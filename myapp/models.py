@@ -3,7 +3,7 @@ from django.conf import settings
 # Create your models here.
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+import random
 STATUS_CHOICES = [
     ('active', 'Active'),
     ('inactive', 'Inactive'),
@@ -18,6 +18,8 @@ class CustomUser(AbstractUser):
         ('technician', 'Technician'),
         ('user', 'User'),
         ('admin', 'Admin'),
+        ('delivery_boy', 'Delivery Boy'),
+        ('device_specialist', 'Device Specialist'),
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     is_approved = models.BooleanField(default=False)
@@ -27,6 +29,7 @@ class CustomUser(AbstractUser):
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
     qualification = models.FileField(upload_to='qualifications/', blank=True, null=True)
+    assigned_area = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.username
@@ -76,14 +79,34 @@ class Payment(models.Model):
         ('Completed', 'Completed'),
         ('Failed', 'Failed'),
     ]
+    
+    ORDER_STATUS_CHOICES = [
+        ('Order Confirmed', 'Order Confirmed'),
+        ('Active', 'Active'),
+        ('Inactive', 'Inactive'),
+        ('Out of Delivery', 'Out of Delivery'),  # Add this option
+    ]
 
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    order_status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='Order Confirmed')
     created_at = models.DateTimeField(auto_now_add=True)
+    otp = models.CharField(max_length=6, blank=True, null=True)
+    delivered_at = models.DateTimeField(blank=True, null=True)# New OTP field
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+
+
+
+    def generate_otp(self):
+        """Generate a 6-digit OTP and save it to the model."""
+        self.otp = str(random.randint(100000, 999999))
+        self.save()
 
     def __str__(self):
-        return f"Payment {self.id} - {self.cart.user.username} - {self.status}"    
+        return f"Payment {self.id} - {self.cart.user.username} - {self.status} - {self.order_status}"
+    
 STATUS_CHOICES = [
     ('active', 'Active'),
     ('inactive', 'Inactive'),
@@ -203,3 +226,62 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"Feedback from {self.user.username}: {self.emoji}"
+class OldPhoneCategory(models.Model):  # Changed table name to "old_phone_category"
+    name = models.CharField(max_length=255, unique=True)
+    image = models.ImageField(upload_to='old_phone_categories/', blank=True, null=True)
+
+    class Meta:
+        db_table = "old_phone_category"  # Custom table name
+
+    def __str__(self):
+        return self.name
+class OldPhoneSubCategory(models.Model):
+    category = models.ForeignKey(OldPhoneCategory, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        db_table = "old_phone_subcategory"  # Custom table name
+
+    def __str__(self):
+        return self.name
+class OldPhoneModel(models.Model):
+    name = models.CharField(max_length=255)
+    subcategory = models.ForeignKey('OldPhoneSubCategory', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+class PhoneRepairRequest(models.Model):
+    user_name = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=15)
+    imei_number = models.CharField(max_length=15, unique=True)
+    phone_category = models.CharField(max_length=255)
+    phone_subcategory = models.CharField(max_length=255)
+    phone_model = models.CharField(max_length=255)
+    phone_condition = models.CharField(max_length=50, choices=[
+        ('Like New', 'Like New'),
+        ('Good', 'Good'),
+        ('Average', 'Average'),
+        ('Needs Repair', 'Needs Repair'),
+    ])
+    pickup_date = models.DateField()
+    pincode = models.CharField(max_length=10)
+    issue_description = models.TextField(blank=True, null=True)
+    pickup_address = models.TextField()
+    phone_images = models.FileField(upload_to="phone_images/", blank=True, null=True)
+    expected_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        self.expected_price = self.calculate_expected_price()
+        super().save(*args, **kwargs)
+
+    def calculate_expected_price(self):
+        base_price = 10000  # Example base price, you can adjust based on category
+        condition_price_mapping = {
+            'Like New': 0.9,
+            'Good': 0.7,
+            'Average': 0.5,
+            'Needs Repair': 0.3,
+        }
+        price_factor = condition_price_mapping.get(self.phone_condition, 0.5)
+        return base_price * price_factor

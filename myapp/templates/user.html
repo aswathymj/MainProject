@@ -369,7 +369,7 @@
 									 <div id="profileModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h1>Profile</h1>
+                <h1> User Profile</h1>
                 <button class="close">&times;</button>
             </div>
             <div class="modal-body">
@@ -377,6 +377,7 @@
                 <p><strong>Email:</strong> {{ user.email }}</p>
                 <p><strong>Phone:</strong> {{ user.phone }}</p>
                 <p><strong>Address:</strong> {{ user.address }}</p>
+				<p><strong>Pincode:</strong> {{ user.pincode }}</p>
 				<button id="editButton" class="btn btn-primary" onclick="openModal('editProfileModal')">Edit</button>
 			</div>
 	
@@ -411,6 +412,10 @@
                 <div class="form-group">
                     <label for="address">Address:</label>
                     <textarea id="address" name="address" required class="form-control">{{ user.address }}</textarea>
+                </div>
+				<div class="form-group">
+                    <label for="address">Pincode:</label>
+                    <textarea id="address" name="pincode" required class="form-control">{{ user.pincode }}</textarea>
                 </div>
                 
                 <div class="form-actions">
@@ -474,7 +479,7 @@
 				                    <li ><a href="{% url 'accessories' %}">Accessories</a></li>
 									<li ><a href="{% url 'repair' %}">Services</a></li>
 									
-				                    
+				                    <li><a href="{% url 'sell_old_phone' %}">Old Phone</a></li>
 				                    <li ><a href="{% url 'contact' %}">contact</a></li>
 									
 									<li ><a href="{% url 'logout' %}">Logout</a></li>

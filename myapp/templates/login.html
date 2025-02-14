@@ -306,6 +306,21 @@
                                 <span id="addressError" class="error"></span>
                             </div><br>
                             <div class="input-box">
+                                <i class="fas fa-map-marker-alt"></i> <!-- Icon for pin code -->
+                                <select name="pincode" required>
+                                    <option value="" disabled selected>Select your pincode</option>
+                                    <option value="686001">686001 - Kottayam</option>
+                                    <option value="686002">686002 - Nagampadam</option>
+                                    <option value="686003">686003 - Kumarakom</option>
+                                    <option value="686004">686004 - Ettumanoor</option>
+                                    <option value="686005">686005 - Puthuppally</option>
+                                    <option value="686006">686006 - Changanassery</option>
+                                    <option value="686007">686007 - Pampady</option>
+                                    <!-- Add other Kottayam pin codes here -->
+                                </select><br>
+                                <span id="pincodeError" class="error"></span>
+                            </div><br>
+                            <div class="input-box">
                                 <i class="fas fa-lock"></i>
                                 <input type="password" placeholder="Enter your password" name="password" id="password" required>
                                 <span id="passwordError" class="error"></span>
@@ -316,6 +331,8 @@
                                     <option value="">Select your role</option>
                                     <option value="user">User</option>
                                     <option value="technician">Technician</option>
+                                    <option value="delivery_boy">Delivery Boy</option>
+                                    <option value="device_specialist">Device Specialist</option>
                                 </select>
                                 <span id="roleError" class="error"></span>
                             </div>
@@ -349,7 +366,7 @@
                     $('#loginEmailError').text("");
                 }
             });
-
+    
             $('input[name="spassword"]').on('input', function() {
                 var password = $(this).val().trim();
                 if (password === "") {
@@ -358,7 +375,7 @@
                     $('#loginPasswordError').text("");
                 }
             });
-
+    
             // Signup form validation on input change
             $('input[name="name"]').on('input', function() {
                 var name = $(this).val().trim();
@@ -371,7 +388,7 @@
                     $('#nameError').text("");
                 }
             });
-
+    
             $('input[name="email"]').on('input', function() {
                 var email = $(this).val().trim();
                 var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -383,7 +400,7 @@
                     $('#emailError').text("");
                 }
             });
-
+    
             $('input[name="phone"]').on('input', function() {
                 var phone = $(this).val().trim();
                 var phonePattern = /^[789]\d{9}$/;
@@ -395,7 +412,7 @@
                     $('#phoneError').text("");
                 }
             });
-
+    
             $('input[name="address"]').on('input', function() {
                 var address = $(this).val().trim();
                 var addressPattern = /^[a-zA-Z0-9\s.,#-]{5,}$/;
@@ -407,7 +424,7 @@
                     $('#addressError').text("");
                 }
             });
-
+    
             $('input[name="password"]').on('input', function() {
                 var password = $(this).val().trim();
                 var passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
@@ -419,16 +436,32 @@
                     $('#passwordError').text("");
                 }
             });
-
+    
             $('select[name="role"]').on('change', function() {
                 var role = $(this).val().trim();
-                if (role === "") {
-                    $('#roleError').text("Role is required");
+                // Show file upload for specific roles
+                if (["technician", "delivery_boy", "device_specialist"].includes(role)) {
+                    $('#qualificationBox').show();
                 } else {
-                    $('#roleError').text("");
+                    $('#qualificationBox').hide();
+                    $('#qualification').val(''); // Clear the file input if not required
+                    $('#qualificationError').text('');
                 }
             });
-
+    
+            // Validate the qualification field on file input change
+            $('#qualification').on('change', function() {
+                var file = $(this).get(0).files[0];
+                if (file) {
+                    var fileType = file.type;
+                    if (fileType !== 'application/pdf') {
+                        $('#qualificationError').text("Only PDF files are allowed.");
+                    } else {
+                        $('#qualificationError').text("");
+                    }
+                }
+            });
+    
             // Form submission validation
             $('#signupForm').on('submit', function(e) {
                 var valid = true;
@@ -445,66 +478,22 @@
                     $('#roleError').text("Role is required");
                     valid = false;
                 }
+                if (["technician", "delivery_boy", "device_specialist"].includes(roles.val().trim())) {
+                    var qualificationFile = $('#qualification').get(0).files[0];
+                    if (!qualificationFile) {
+                        $('#qualificationError').text("Qualification document is required");
+                        valid = false;
+                    } else if (qualificationFile.type !== 'application/pdf') {
+                        $('#qualificationError').text("Only PDF files are allowed.");
+                        valid = false;
+                    }
+                }
                 if (!valid) {
                     e.preventDefault();
                 }
             });
         });
-        $('select[name="role"]').on('change', function() {
-            var role = $(this).val().trim();
-            if (role === "technician") {
-                $('#qualificationBox').show();
-            } else {
-                $('#qualificationBox').hide();
-                $('#qualification').val(''); // Clear the file input if not a technician
-                $('#qualificationError').text('');
-            }
-        });
-    
-        // Validate the qualification field on file input change
-        $('#qualification').on('change', function() {
-            var file = $(this).get(0).files[0];
-            if (file) {
-                var fileType = file.type;
-                if (fileType !== 'application/pdf') {
-                    $('#qualificationError').text("Only PDF files are allowed.");
-                } else {
-                    $('#qualificationError').text("");
-                }
-            }
-        });
-    
-        // Form submission validation
-        $('#signupForm').on('submit', function(e) {
-            var valid = true;
-            var fields = ['name', 'email', 'phone', 'address', 'password'];
-            var roles = $('select[name="role"]');
-            fields.forEach(function(field) {
-                var input = $('input[name="' + field + '"]');
-                if (input.val().trim() === "") {
-                    $('#' + field + 'Error').text("This field is required");
-                    valid = false;
-                }
-            });
-            if (roles.val().trim() === "") {
-                $('#roleError').text("Role is required");
-                valid = false;
-            }
-            if (roles.val().trim() === "technician") {
-                var qualificationFile = $('#qualification').get(0).files[0];
-                if (!qualificationFile) {
-                    $('#qualificationError').text("Qualification document is required");
-                    valid = false;
-                } else if (qualificationFile.type !== 'application/pdf') {
-                    $('#qualificationError').text("Only PDF files are allowed.");
-                    valid = false;
-                }
-            }
-            if (!valid) {
-                e.preventDefault();
-            }
-        });
-    
     </script>
+    
 </body>
 </html>

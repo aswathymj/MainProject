@@ -1,6 +1,6 @@
 from django.urls import path, include
 from django.contrib import admin
-from myapp.views import   contact,chatbot_view,feedback_lists,history_order,service_requests_list, completed_service_requests, create_order,razorpay_webhook, get_expected_rate, manage_terms_and_conditions, submit_terms, terms_and_conditions, service_request_success, create_service_request, get_subcategory, get_models, get_complaints, user_login, register, index, admin_view, technician_view, user_view, logout_view, add_category, accessories, view_category, delete_category, add_subcategory, view_subcategory,edit_category,edit_subcategory,delete_subcategory,add_product,view_product,edit_product,delete_product,get_subcategories,product_detail,category_products,add_to_cart,view_cart,update_cart,remove_from_cart,buy_now,payment_detail,update_user_details,create_paypal_payment, execute_paypal_payment, payment_cancelled, create_payment,verify_payment,update_payment_status,paid_users,technician_dashboard,manage_technicians,approve_technician,reject_technician,add_phcategory,phone_category_list,edit_phcategory,delete_phcategory,add_phsubcategory,list_phsubcategories,edit_phsubcategory,delete_phsubcategory,add_phone_model,view_phone_models,delete_phone_model,edit_phone_model,add_complaint,complaint_list,delete_complaint,edit_complaint,forgot_password,reset_password,download_qualification,repair_view,repair_status,phone_category_view,get_service_request_data,update_service_request,service_requests,download_receipt,add_to_wishlist, remove_from_wishlist, wishlist_view,feedback_view, feedback_success, feedback_list_view,  product_filter, edit_profile, order_history, technician_profile, edit_technician
+from myapp.views import  edit_old_phone_category,sell_request,user_requests,image_search,add_old_phone_model,view_old_phone_models, edit_old_phone_model,delete_old_phone_model, edit_old_phone_subcategory,delete_old_phone_subcategory,view_old_phone_subcategories, manage_delivery_boys,delete_delivery_boy,delete_old_phone_category, add_old_phone_subcategory,view_old_phone_categories,add_old_phone_category,sell_old_phone,edit_specialist_profile,update_location,verify_otp,update_order_status, assigned_orders,get_all_delivery_boy_details,delivery_boy_profile,assign_delivery_boy,approve_delivery_boy,reject_delivery_boy,manage_device_specialists,approve_device_specialist, reject_device_specialist, delivery_boy_view,device_specialist_view,contact,chatbot_view,feedback_lists,history_order,service_requests_list, completed_service_requests, create_order,razorpay_webhook, get_expected_rate, manage_terms_and_conditions, submit_terms, terms_and_conditions, service_request_success, create_service_request, get_subcategory, get_models, get_complaints, user_login, register, index, admin_view, technician_view, user_view, logout_view, add_category, accessories, view_category, delete_category, add_subcategory, view_subcategory,edit_category,edit_subcategory,delete_subcategory,add_product,view_product,edit_product,delete_product,get_subcategories,product_detail,category_products,add_to_cart,view_cart,update_cart,remove_from_cart,buy_now,payment_detail,update_user_details,create_paypal_payment, execute_paypal_payment, payment_cancelled, create_payment,verify_payment,update_payment_status,paid_users,technician_dashboard,manage_technicians,approve_technician,reject_technician,add_phcategory,phone_category_list,edit_phcategory,delete_phcategory,add_phsubcategory,list_phsubcategories,edit_phsubcategory,delete_phsubcategory,add_phone_model,view_phone_models,delete_phone_model,edit_phone_model,add_complaint,complaint_list,delete_complaint,edit_complaint,forgot_password,reset_password,download_qualification,repair_view,repair_status,phone_category_view,get_service_request_data,update_service_request,service_requests,download_receipt,add_to_wishlist, remove_from_wishlist, wishlist_view,feedback_view, feedback_success, feedback_list_view,  product_filter, edit_profile, order_history, technician_profile, edit_technician
 from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', index, name='index'),
@@ -102,6 +102,42 @@ urlpatterns = [
  path('service-requests-list/', service_requests_list, name='service_requests_list'),
  path('history-order/', history_order, name='history_order'),
  path('contact/', contact, name='contact'),
+ 
+    path('delivery-boy/', delivery_boy_view, name='delivery_boy_view'),
+    path('device-specialist/', device_specialist_view, name='device_specialist_view'),
+path('manage-devicespecialists/', manage_device_specialists, name='manage_device_specialists'),
+    path('approve-devicespecialist/<int:user_id>/', approve_device_specialist, name='approve_device_specialist'),
+    path('reject-devicespecialist/<int:user_id>/', reject_device_specialist, name='reject_device_specialist'),
+     path('manage-deliveryboys/', manage_delivery_boys, name='manage_delivery_boys'),
+    path('approve-deliveryboy/<int:user_id>/', approve_delivery_boy, name='approve_delivery_boy'),
+    path('reject-deliveryboy/<int:user_id>/', reject_delivery_boy, name='reject_delivery_boy'),
+    path("delivery-boy-profile/", delivery_boy_profile, name="delivery_boy_profile"),
+    path('assign-delivery-boy/<int:id>/',assign_delivery_boy, name='assign_delivery_boy'),
+    path('get_all_delivery_boy_details/',get_all_delivery_boy_details, name='get_all_delivery_boy_details'),
+    path('delete-delivery-boy/<int:delivery_boy_id>/', delete_delivery_boy, name='delete_delivery_boy'),
+    path('assigned-orders/', assigned_orders, name='assigned_orders'),
+    path("update_order_status/", update_order_status, name="update_order_status"),
+    path('verify-otp/', verify_otp, name='verify_otp'),
+     path('update-location/', update_location, name='update_location'),
+      path('edit-specialist-profile/', edit_specialist_profile, name='edit_specialist_profile'),
+        path('sell-old-phone/', sell_old_phone, name='sell_old_phone'),
+         path('add-old-phone-category/', add_old_phone_category, name='add_old_phone_category'),
+          path('view-category/', view_old_phone_categories, name='view_old_phone_categories'),
+path('add-subcategory/', add_old_phone_subcategory, name='add_old_phone_subcategory'),
+ path('category/delete/<int:pk>/', delete_old_phone_category, name='delete_old_phone_category'),
+  path("category/edit/<int:pk>/",edit_old_phone_category, name="edit_old_phone_category"),
+    path('subcategory/view/', view_old_phone_subcategories, name='view_old_phone_subcategory'),
+path('subcategory/delete/<int:pk>/', delete_old_phone_subcategory, name='delete_old_phone_subcategory'),
+path('subcategory/edit/<int:pk>/', edit_old_phone_subcategory, name='edit_old_phone_subcategory'),
+ path('model/add/', add_old_phone_model, name='add_old_phone_model'),
+    path('model/view/', view_old_phone_models, name='view_old_phone_models'),
+    path('model/edit/<int:pk>/', edit_old_phone_model, name='edit_old_phone_model'),
+    path('model/delete/<int:pk>/', delete_old_phone_model, name='delete_old_phone_model'),
+        path('sell-request/', sell_request, name='sell_request'),
+         path('image-search/', image_search, name='image_search'),
+             path('my-requests/', user_requests, name='user_requests'),
+        
+
 ]
 
 

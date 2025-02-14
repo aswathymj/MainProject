@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Image-Based Search</title>
+</head>
+<body>
+    <h2>Upload an Image to Find Accessories or Repairs</h2>
+
+    <input type="file" id="imageUpload" accept="image/accessories">
+    <button onclick="searchImage()">Search</button>
+    
+    <img id="preview" style="display:none; width:100px;">
+    <div id="results"></div>
+
+    <script>
+        function searchImage() {
+            let input = document.getElementById('imageUpload');
+            let file = input.files[0];
+
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('preview').src = e.target.result;
+                    document.getElementById('preview').style.display = 'block';
+
+                    let filename = file.name.toLowerCase(); 
+                    let database = {
+                       
+                        "sony.png": "Screen Protector"
+                    };
+
+                    let match = database[filename] || "No match found";
+                    document.getElementById("results").innerHTML = `<h3>Suggested Item: ${match}</h3>`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>

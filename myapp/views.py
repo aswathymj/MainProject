@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from .models import CustomUser
 from django.contrib.auth.decorators import login_required
-from .models import Category,SubCategory,Product,Cart,Payment,PhoneCategory,PhoneSubCategory,PhoneModel,Complaint,ServiceRequest,TermsAndConditions, Payments, Wishlist,Feedback
+from .models import Category,SubCategory,Product,Cart,Payment,PhoneCategory,PhoneSubCategory,PhoneModel,Complaint,ServiceRequest,TermsAndConditions, Payments, Wishlist,Feedback,OldPhoneCategory, OldPhoneSubCategory,OldPhoneModel,PhoneRepairRequest
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -34,6 +34,8 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from datetime import datetime
+from django.contrib.auth import update_session_auth_hash
+
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
@@ -63,17 +65,31 @@ def technician_view(request):
     }
     technicians = CustomUser.objects.filter(role='technician')
     return render(request, 'technician.html', context)
+@login_required
+def delivery_boy_view(request):
+    context = {
+        'username': request.user.username,
+    }
+    delivery_boys = CustomUser.objects.filter(role='delivery_boy')
+    return render(request, 'delivery_boy.html', context)
 
+@login_required
+def device_specialist_view(request):
+    context = {
+        'username': request.user.username,
+    }
+    device_specialists = CustomUser.objects.filter(role='device_specialist')
+    return render(request, 'device_specialist.html', context)
 def user_login(request):
     if request.method == 'POST':
         email = request.POST['semail']
         password = request.POST['spassword']
         user = authenticate(request, username=email, password=password)
         if user is not None:
-            if user.role == 'technician' and not user.is_approved:
+            if user.role in ['technician', 'delivery_boy', 'device_specialist'] and not user.is_approved:
                 messages.error(request, "Your account is not yet approved by the admin.")
             else:
-                if user.role == 'technician' and user.is_approved:
+                if user.role in ['technician', 'delivery_boy', 'device_specialist'] and user.is_approved:
                     messages.success(request, "Your account has been approved by the admin.")
                 login(request, user)
                 if user.role == 'admin':
@@ -82,23 +98,38 @@ def user_login(request):
                     return redirect('user_view')
                 elif user.role == 'technician':
                     return redirect('technician_view')
+                elif user.role == 'delivery_boy':
+                    return redirect('delivery_boy_view')
+                elif user.role == 'device_specialist':
+                    return redirect('device_specialist_view')
         else:
             return render(request, 'login.html', {'msg': 'Invalid email or password'})
     return render(request, 'login.html')
 
 def register(request):
     if request.method == 'POST':
+        # Retrieve form data
         name = request.POST.get('name')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
         address = request.POST.get('address')
+        pincode = request.POST.get('pincode')  # Retrieve the selected pincode
         role = request.POST.get('role')
         password = request.POST.get('password')
         qualification = request.FILES.get('qualification', None)  # Get the uploaded file
 
-        if role == 'technician' and not qualification:
-            # Handle case where qualification is required but not provided
-            return render(request, 'register.html', {'error': 'Qualification document is required for technicians.'})
+        # Validate pincode (ensure it's within Kottayam district range)
+        valid_pincodes = ['686001', '686002', '686003', '686004', '686005', '686006', '686007']  # Add more as needed
+        if pincode not in valid_pincodes:
+            return render(request, 'register.html', {
+                'error': 'Invalid pincode selected. Please choose a valid pincode for Kottayam district.'
+            })
+
+        # Handle qualification requirement based on role
+        if role in ['technician', 'delivery_boy', 'device_specialist'] and not qualification:
+            return render(request, 'register.html', {
+                'error': f'Qualification document is required for {role.replace("_", " ")}s.'
+            })
 
         # Create the user
         user = CustomUser.objects.create_user(
@@ -109,13 +140,16 @@ def register(request):
             phone=phone,
             address=address,
             role=role,
+            pincode=pincode,  # Save pincode to the database
             qualification=qualification
         )
+        user.is_approved = False  # Ensure the user is not approved by default
         user.save()
 
         return redirect('login')
         
     return render(request, 'register.html')
+
 
 def logout_view(request):
     logout(request)
@@ -1373,3 +1407,455 @@ def contact(request):
         return redirect('contact')  # Redirect back to the contact page
 
     return render(request, 'contact.html')
+def manage_device_specialists(request):
+    device_specialists = CustomUser.objects.filter(role='device_specialist')
+    return render(request, 'manage_devicespecialist.html', {'specialists': device_specialists})
+
+def approve_device_specialist(request, user_id):
+    specialist = CustomUser.objects.get(id=user_id, role='device_specialist')
+    specialist.is_approved = True
+    specialist.save()
+    return redirect('manage_device_specialists')
+
+def reject_device_specialist(request, user_id):
+    specialist = CustomUser.objects.get(id=user_id, role='device_specialist')
+    specialist.is_approved = False
+    specialist.save()
+    return redirect('manage_device_specialists')
+def manage_delivery_boys(request):
+    delivery_boys = CustomUser.objects.filter(role='delivery_boy')
+    return render(request, 'manage_deliveryboy.html', {'delivery_boys': delivery_boys})
+
+def approve_delivery_boy(request, user_id):
+    delivery_boy = CustomUser.objects.get(id=user_id, role='delivery_boy')
+    delivery_boy.is_approved = True
+    delivery_boy.save()
+    return redirect('manage_delivery_boys')
+
+def reject_delivery_boy(request, user_id):
+    delivery_boy = CustomUser.objects.get(id=user_id, role='delivery_boy')
+    delivery_boy.is_approved = False
+    delivery_boy.save()
+    return redirect('manage_delivery_boys')
+@login_required
+def delivery_boy_profile(request):
+    if request.method == "POST":
+        form = EditProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect("delivery_boy_profile")
+        else:
+            messages.error(request, "Error updating profile.")
+    else:
+        form = EditProfileForm(instance=request.user)
+    
+    return render(request, "delivery_boy_profile.html", {"form": form, "user": request.user})
+def assign_delivery_boy(request, id):
+    # Get the delivery boy user by ID
+    delivery_boy = get_object_or_404(CustomUser, id=id, role='delivery_boy')
+
+    # Check if the delivery boy is approved
+    if not delivery_boy.is_approved:
+        messages.error(request, "This delivery boy is not approved yet!")
+        return redirect('manage_delivery_boys')  # Replace with the correct list view name
+
+    if request.method == "POST":
+        assigned_area = request.POST.get('assigned_area')
+        delivery_boy.assigned_area = assigned_area
+        delivery_boy.save()
+
+        messages.success(request, f"Assigned {assigned_area} to {delivery_boy.username}")
+        return redirect('manage_delivery_boys')  # Replace with the correct list view name
+
+    return render(request, 'assign_delivery_boy.html', {'delivery_boy': delivery_boy})
+def get_all_delivery_boy_details(request):
+    if request.method == "GET":
+        # Fetch all delivery boys
+        delivery_boys = CustomUser.objects.filter(role="delivery_boy")
+        data = [
+            {
+                "username": boy.username,
+                "email": boy.email,
+                "phone": boy.phone,
+                "assigned_area": boy.assigned_area or "Not Assigned",
+                "status": boy.get_status_display(),
+            }
+            for boy in delivery_boys
+        ]
+        return JsonResponse({"success": True, "data": data})
+def delete_delivery_boy(request, delivery_boy_id):
+    # Fetch the delivery boy object or return 404
+    delivery_boy = get_object_or_404(CustomUser, id=delivery_boy_id, role='delivery_boy')
+
+    # Perform the deletion
+    delivery_boy.delete()
+
+    # Show a success message
+    messages.success(request, "Delivery boy deleted successfully.")
+
+    # Redirect back to the manage delivery agents page
+    return redirect('manage_delivery_boys')
+
+def assigned_orders(request):
+    if request.user.role == 'delivery_boy' and request.user.assigned_area:
+        users = CustomUser.objects.filter(role='user', pincode=request.user.assigned_area)
+        orders = Payment.objects.filter(cart__user__in=users, status='Paid').select_related('cart__product')
+
+        if request.method == 'POST':
+            otp = request.POST.get('otp')
+            delivered_at = request.POST.get('delivered_at')
+            payment_id = request.POST.get('payment_id')
+
+            # Debugging to check if payment_id is correctly passed
+            print(f"Received payment_id: {payment_id}")
+
+            if payment_id:  # Check if payment_id is not empty
+                try:
+                    payment = Payment.objects.get(id=payment_id)
+                    payment.otp = otp
+                    payment.delivered_at = delivered_at
+                    payment.save()
+
+                    messages.success(request, "Order updated successfully.")
+                except Payment.DoesNotExist:
+                    messages.error(request, "Payment order not found.")
+            else:
+                messages.error(request, "Invalid payment ID.")
+
+            return redirect('assigned_orders')
+
+    else:
+        users = CustomUser.objects.none()
+        orders = Payment.objects.none()
+
+    context = {
+        'users': users,
+        'orders': orders,
+    }
+    return render(request, 'assigned_orders.html', context)
+
+@csrf_exempt
+def update_order_status(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            payment_id = data.get("payment_id")
+            new_status = data.get("order_status")
+
+            payment = Payment.objects.get(id=payment_id)
+            payment.order_status = new_status
+
+            # If status is "Out of Delivery", generate OTP
+            if new_status == "Out of Delivery":
+                payment.generate_otp()
+
+            payment.save()
+
+            return JsonResponse({"success": True, "otp": payment.otp if new_status == "Out of Delivery" else None})
+
+        except Payment.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Payment not found"})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+
+def verify_otp(request):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        payment_id = request.POST.get('payment_id')
+        
+        try:
+            payment = Payment.objects.get(id=payment_id)
+            
+            # Check if the entered OTP matches the stored OTP
+            if payment.otp == entered_otp:
+                return JsonResponse({'status': 'success', 'message': 'OTP is correct'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Invalid OTP'})
+        except Payment.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Payment not found'})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+@csrf_exempt  # Allow AJAX requests without CSRF protection (for development)
+def update_location(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            payment_id = data.get('payment_id')
+            latitude = data.get('latitude')
+            longitude = data.get('longitude')
+
+            payment = Payment.objects.get(id=payment_id)
+            payment.latitude = latitude
+            payment.longitude = longitude
+            payment.save()
+
+            return JsonResponse({'success': True})
+        except Payment.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Payment not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+@login_required
+def edit_specialist_profile(request):
+    if request.method == 'POST':
+        user = request.user
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        user.phone = request.POST.get('phone')
+        user.address = request.POST.get('address')
+
+        # Handle qualification file upload
+        if 'qualification' in request.FILES:
+            user.qualification = request.FILES['qualification']
+
+        user.save()
+                # ✅ Prevent logout by updating session authentication
+        update_session_auth_hash(request, user)
+        messages.success(request, "Profile updated successfully!")
+        return redirect('/?profile_modal=open')  # Redirect with a query parameter
+
+    return redirect('/')
+def sell_old_phone(request):
+    return render(request, 'sell_old_phone.html')
+def add_old_phone_category(request):
+    if request.method == "POST":
+        category_name = request.POST.get("category_name")
+        image = request.FILES.get("category_image")
+
+        if category_name:
+            OldPhoneCategory.objects.create(name=category_name, image=image)  # Save image
+            messages.success(request, "Old Phone Category added successfully!")
+            return redirect("add_old_phone_category")
+        else:
+            messages.error(request, "Category name cannot be empty!")
+
+    return render(request, "add_old_phone_category.html")
+def view_old_phone_categories(request):
+    categories = OldPhoneCategory.objects.all()  # Fetch all categories
+    return render(request, 'view_old_phone_categories.html', {'categories': categories})
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import OldPhoneCategory, OldPhoneSubCategory
+import re  # Import regex module for validation
+
+def add_old_phone_subcategory(request):
+    categories = OldPhoneCategory.objects.all()
+
+    if request.method == "POST":
+        category_id = request.POST.get("category")
+        subcategory_name = request.POST.get("subcategory").strip()
+
+        if not category_id:
+            messages.error(request, "⚠️ Please select a category.")
+            return redirect('add_old_phone_subcategory')
+
+        if not subcategory_name:
+            messages.error(request, "⚠️ SubCategory name cannot be empty.")
+            return redirect('add_old_phone_subcategory')
+
+        if not re.match(r"^[a-zA-Z\s]+$", subcategory_name):  # Check if only alphabets and spaces are allowed
+            messages.error(request, "⚠️ SubCategory name must contain only letters.")
+            return redirect('add_old_phone_subcategory')
+
+        try:
+            category = OldPhoneCategory.objects.get(id=category_id)
+        except OldPhoneCategory.DoesNotExist:
+            messages.error(request, "⚠️ Selected category does not exist.")
+            return redirect('add_old_phone_subcategory')
+
+        if OldPhoneSubCategory.objects.filter(category=category, name=subcategory_name).exists():
+            messages.error(request, "⚠️ This SubCategory already exists.")
+            return redirect('add_old_phone_subcategory')
+
+        OldPhoneSubCategory.objects.create(category=category, name=subcategory_name)
+        messages.success(request, "✅ SubCategory added successfully!")
+        return redirect('add_old_phone_subcategory')
+
+    return render(request, 'add_old_phone_subcategory.html', {'categories': categories})
+
+def delete_old_phone_category(request, pk):
+    category = get_object_or_404(OldPhoneCategory, pk=pk)
+    category.delete()
+    return redirect('view_old_phone_categories') 
+def edit_old_phone_category(request, pk):
+    category = get_object_or_404(OldPhoneCategory, id=pk)
+
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        category_name = data.get("category_name", "").strip()
+
+        # Server-side validation
+        if not category_name:
+            return JsonResponse({"success": False, "error": "Category name cannot be empty."})
+
+        if not re.match(r"^[A-Za-z\s]+$", category_name):
+            return JsonResponse({"success": False, "error": "Category name must contain only alphabetic characters."})
+
+        # Check for duplicate category names
+        if OldPhoneCategory.objects.filter(name__iexact=category_name).exclude(id=category.id).exists():
+            return JsonResponse({"success": False, "error": "A category with this name already exists."})
+
+        category.name = category_name
+        category.save()
+        return JsonResponse({"success": True})
+
+    return render(request, "edit_old_phone_category.html", {"category": category})
+def view_old_phone_subcategories(request):
+    subcategories = OldPhoneSubCategory.objects.select_related('category').all()
+    return render(request, 'view_old_phone_subcategories.html', {'subcategories': subcategories})
+def delete_old_phone_subcategory(request, pk):
+    subcategory = get_object_or_404(OldPhoneSubCategory, id=pk)
+    subcategory.delete()
+    messages.success(request, "✅ SubCategory deleted successfully!")
+    return redirect('view_old_phone_subcategory')
+def edit_old_phone_subcategory(request, pk):
+    subcategory = get_object_or_404(OldPhoneSubCategory, pk=pk)
+    
+    if request.method == 'POST':
+        new_name = request.POST.get('subcategory_name').strip()
+        
+        if not new_name:
+            messages.error(request, "⚠️ SubCategory name cannot be empty.")
+            return redirect('edit_old_phone_subcategory', pk=pk)
+
+        if not re.match(r"^[a-zA-Z\s]+$", new_name):
+            messages.error(request, "⚠️ SubCategory name must contain only letters.")
+            return redirect('edit_old_phone_subcategory', pk=pk)
+
+        subcategory.name = new_name
+        subcategory.save()
+        messages.success(request, "✅ SubCategory updated successfully!")
+        return redirect('view_old_phone_subcategory')
+
+    return render(request, 'edit_old_phone_subcategory.html', {'subcategory': subcategory})
+def add_old_phone_model(request):
+    subcategories = OldPhoneSubCategory.objects.all()
+    
+    if request.method == "POST":
+        name = request.POST.get("name").strip()
+        subcategory_id = request.POST.get("subcategory")
+        
+        if not name:
+            messages.error(request, "⚠️ Model name cannot be empty.")
+            return redirect('add_old_phone_model')
+        
+        if not subcategory_id:
+            messages.error(request, "⚠️ Please select a subcategory.")
+            return redirect('add_old_phone_model')
+        
+        subcategory = OldPhoneSubCategory.objects.get(id=subcategory_id)
+        OldPhoneModel.objects.create(name=name, subcategory=subcategory)
+        messages.success(request, "✅ Model added successfully!")
+        return redirect('view_old_phone_models')
+    
+    return render(request, 'add_old_phone_model.html', {'subcategories': subcategories})
+
+def view_old_phone_models(request):
+    models = OldPhoneModel.objects.select_related('subcategory').all()
+    return render(request, 'view_old_phone_models.html', {'models': models})
+
+def edit_old_phone_model(request, pk):
+    model_instance = get_object_or_404(OldPhoneModel, pk=pk)
+    subcategories = OldPhoneSubCategory.objects.all()
+    
+    if request.method == "POST":
+        name = request.POST.get("name").strip()
+        subcategory_id = request.POST.get("subcategory")
+        
+        if not name:
+            messages.error(request, "⚠️ Model name cannot be empty.")
+            return redirect('edit_old_phone_model', pk=pk)
+        
+        if not subcategory_id:
+            messages.error(request, "⚠️ Please select a subcategory.")
+            return redirect('edit_old_phone_model', pk=pk)
+        
+        subcategory = OldPhoneSubCategory.objects.get(id=subcategory_id)
+        model_instance.name = name
+        model_instance.subcategory = subcategory
+        model_instance.save()
+        messages.success(request, "✅ Model updated successfully!")
+        return redirect('view_old_phone_models')
+
+    return render(request, 'edit_old_phone_model.html', {'model': model_instance, 'subcategories': subcategories})
+
+def delete_old_phone_model(request, pk):
+    model_instance = get_object_or_404(OldPhoneModel, pk=pk)
+    model_instance.delete()
+    messages.success(request, "✅ Model deleted successfully!")
+    return redirect('view_old_phone_models')
+@login_required
+def sell_request(request):
+    user = request.user  # Get the logged-in user
+    context = {
+        'user_name': user.first_name,
+        'phone_number': user.phone,
+        'phone_categories': PhoneCategory.objects.all(),  # If you have categories
+    }
+    return render(request, 'sell_request.html', context)
+
+
+
+def image_search(request):
+    return render(request, 'image_search.html')
+@login_required
+def sell_request(request):
+    user = request.user  # Get the logged-in user
+
+    if request.method == "POST":
+        user_name = request.POST.get("user_name")
+        phone_number = request.POST.get("phone_number")
+        imei_number = request.POST.get("imei_number")
+        phone_category = request.POST.get("phone_category")
+        phone_subcategory = request.POST.get("phone_subcategory")
+        phone_model = request.POST.get("phone_model")
+        phone_condition = request.POST.get("phone_condition")
+        pickup_date = request.POST.get("pickup_date")
+        pincode = request.POST.get("pincode")
+        issue_description = request.POST.get("issue_description", "")
+        pickup_address = request.POST.get("pickup_address")
+        phone_images = request.FILES.getlist("phone_images")  # Multiple images
+
+        # Save the form data to the database
+        phone_repair_request = PhoneRepairRequest.objects.create(
+            user_name=user_name,
+            phone_number=phone_number,
+            imei_number=imei_number,
+            phone_category=phone_category,
+            phone_subcategory=phone_subcategory,
+            phone_model=phone_model,
+            phone_condition=phone_condition,
+            pickup_date=pickup_date,
+            pincode=pincode,
+            issue_description=issue_description,
+            pickup_address=pickup_address,
+        )
+
+        # Handle multiple image uploads
+        for image in phone_images:
+            phone_repair_request.phone_images.save(image.name, image)
+
+        messages.success(request, "Your request has been submitted successfully!")
+        return redirect("user_requests")  # Change to your success page URL name
+
+    context = {
+        'user_name': user.first_name,
+        'phone_number': user.phone,
+        'phone_categories': PhoneCategory.objects.all(),  # If you have categories
+    }
+    return render(request, 'sell_request.html', context)
+@login_required
+def user_requests(request):
+    user = request.user  # Get the logged-in user
+    user_requests = PhoneRepairRequest.objects.filter(phone_number=user.phone)
+
+    context = {
+        'user_requests': user_requests,
+    }
+    return render(request, 'user_requests.html', context)
+def technician_list(request):
+    active_technicians = CustomUser.objects.filter(role='technician', status='active')
+    return render(request, 'accessories.html', {'active_technicians': active_technicians})

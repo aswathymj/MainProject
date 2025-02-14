@@ -1,0 +1,704 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+ 
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+  
+<link rel="stylesheet" href="{% static 'deassets/vendor/bootstrap/css/bootstrap.min.css' %}">
+<link href="{% static 'deassets/vendor/fonts/circular-std/style.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'deassets/libs/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'deassets/vendor/fonts/fontawesome/css/fontawesome-all.css' %}">
+<link rel="stylesheet" href="{% static 'deassets/vendor/charts/chartist-bundle/chartist.css' %}">
+<link rel="stylesheet" href="{% static 'deassets/vendor/charts/morris-bundle/morris.css' %}">
+<link rel="stylesheet" href="{% static 'deassets/vendor/fonts/material-design-iconic-font/css/materialdesignicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'deassets/vendor/charts/c3charts/c3.css' %}">
+<link rel="stylesheet" href="{% static 'deassets/vendor/fonts/flag-icon-css/flag-icon.min.css' %}">
+
+    <title>Delivery Boy</title>
+    <style>
+        .user-avatar-md {
+            font-size: 24px; /* Adjust size */
+            color: #555;     /* Adjust color */
+          }
+          .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+          }
+          
+          .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 20px;
+            width: 50%;
+            border-radius: 8px;
+            position: relative;
+          }
+          
+          .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          
+          .close {
+            cursor: pointer;
+            font-size: 1.5rem;
+          }
+          
+          .edit-btn, .submit-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+          }
+          
+          .edit-btn:hover, .submit-btn:hover {
+            background-color: #0056b3;
+          }
+          /* General Modal Styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  z-index: 1000;
+  overflow-y: auto; /* Scrollable if content overflows */
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  background: #ffffff;
+  margin: 5% auto; /* Center horizontally */
+  padding: 20px;
+  width: 90%; /* Mobile-friendly */
+  max-width: 500px; /* Restrict max width on larger screens */
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Header Styles */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.modal-header h1 {
+  font-size: 20px;
+  margin: 0;
+  color: #333333;
+}
+
+.modal-header .close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666666;
+  cursor: pointer;
+}
+
+.modal-header .close:hover {
+  color: #ff4d4d;
+}
+
+/* Form Fields */
+.modal-body form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #555555;
+}
+
+.modal-body form input[type="text"],
+.modal-body form input[type="email"],
+.modal-body form input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #333333;
+}
+
+.modal-body form input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Qualification File Display */
+.modal-body form p {
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  color: #666666;
+}
+
+.modal-body form a {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.modal-body form a:hover {
+  color: #0056b3;
+}
+
+/* Submit Button */
+.modal-body form .submit-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: #ffffff;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.modal-body form .submit-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Default Light Mode */
+body {
+    background-color: #ffffff;
+    color: #000000;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Dark Mode Styles */
+.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+.dark-mode button {
+    background-color: white;
+    color: #fff;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.dark-mode button:hover {
+    background-color:white;
+}
+          
+        </style>
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- main wrapper -->
+    <!-- ============================================================== -->
+    
+        <!-- ============================================================== -->
+        <!-- navbar -->
+        <!-- ============================================================== -->
+        
+        <div class="dashboard-header">
+            <nav class="navbar navbar-expand-lg bg-white fixed-top">
+                <a class="navbar-brand" href="#">
+                    <img src="{% static 'images/logo.png' %}" alt="MobiCare Logo" style="height: 51px; width: 100;">
+                </a>
+               
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto navbar-right-top">
+                        <li class="nav-item">
+                            <div id="custom-search" class="top-search-bar">
+                                <input class="form-control" type="text" placeholder="Search..">
+                                
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                          <div id="dark-mode-toggle" class="dark-mode">
+                              <button onclick="toggleDarkMode()">🌙</button>
+                          </div>
+                      </li>
+                        <li class="nav-item dropdown notification">
+                            <a class="nav-link nav-icons" href="#" id="navbarDropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-fw fa-bell"></i> <span class="indicator"></span></a>
+                            <ul class="dropdown-menu dropdown-menu-right notification-dropdown">
+                                <li>
+                                    <div class="notification-title"> Notification</div>
+                                    <div class="notification-list">
+                                        <div class="list-group">
+                                            <a href="#" class="list-group-item list-group-item-action active">
+                                                <div class="notification-info">
+                                                    <div class="notification-list-user-img"><img src="assets/images/avatar-2.jpg" alt="" class="user-avatar-md rounded-circle"></div>
+                                                    <div class="notification-list-user-block"><span class="notification-list-user-name">Jeremy Rakestraw</span>accepted your invitation to join the team.
+                                                        <div class="notification-date">2 min ago</div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                           
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="list-footer"> <a href="#">View all notifications</a></div>
+                                </li>
+                            </ul>
+                        </li>
+                      
+                        <li class="nav-item dropdown nav-user">
+                            <a 
+                            class="nav-link nav-user-img" 
+                            href="#" 
+                            id="navbarDropdownMenuLink2" 
+                            data-toggle="dropdown" 
+                            aria-haspopup="true" 
+                            aria-expanded="false">
+                            <i class="fa fa-user-circle user-avatar-md"></i>
+                            
+                          </a>
+                          
+                            <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
+                                <div class="nav-user-info">
+                                    <h5 class="mb-0 text-white nav-user-name">{{ user.username }}</h5>
+                                    <span class="status"></span><span class="ml-2">Available</span>
+                                </div>
+                                <a class="dropdown-item" href="#" onclick="openModal('deliveryBoyModal')">
+                                    <i class="fas fa-user mr-2"></i>Account
+                                  </a>
+                                  
+                  
+                                
+                                {% if request.user.is_authenticated %}
+                                <a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-power-off mr-2"></i>Logout</a>
+									{% endif %}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end navbar -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- left sidebar -->
+        <!-- ============================================================== -->
+        <div class="nav-left-sidebar sidebar-dark">
+            <div class="menu-list">
+                <nav class="navbar navbar-expand-lg navbar-light">
+                    <a class="d-xl-none d-lg-none" href="#">Dashboard</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav flex-column">
+                            <li class="nav-divider">
+                                Menu
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link active" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>Dashboard <span class="badge badge-success">6</span></a>
+                                <div id="submenu-1" class="collapse submenu" style="">
+                                    <ul class="nav flex-column">
+                                      
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{% url 'assigned_orders' %}">Assigned Orders</a>
+                                        </li>
+                                       
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                          
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end left sidebar -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- wrapper  -->
+        <!-- ============================================================== -->
+        <div class="dashboard-wrapper">
+           
+                <div class="container-fluid dashboard-content ">
+                    
+                  
+
+                        <div class="row">
+                            <!-- ============================================================== -->
+                      
+                            <!-- ============================================================== -->
+
+                                          <!-- recent orders  -->
+                            <!-- ============================================================== -->
+                            <div class="col-xl-9 col-lg-12 col-md-6 col-sm-12 col-12">
+                                <div class="card">
+                                    
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead class="bg-light">
+                                                
+                                                </thead>
+                                                <tbody>
+                                                    
+                                                 
+                                                     
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        </div>
+                        <div class="row">
+                            <!-- ============================================================== -->
+              				                        <!-- product category  -->
+                            <!-- ============================================================== -->
+                            
+                            <!-- ============================================================== -->
+                            <!-- end product category  -->
+                                   <!-- product sales  -->
+                            <!-- ============================================================== -->
+                            <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
+                                
+                            </div>
+                            <!-- ============================================================== -->
+                            <!-- end product sales  -->
+                            <!-- ============================================================== -->
+                            <div class="col-xl-3 col-lg-12 col-md-6 col-sm-12 col-12">
+                                <!-- ============================================================== -->
+                                <!-- top perfomimg  -->
+                                <!-- ============================================================== -->
+                                <div class="card">
+                                  
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- ============================================================== -->
+                                <!-- end top perfomimg  -->
+                                <!-- ============================================================== -->
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- ============================================================== -->
+                            <!-- sales  -->
+                            <!-- ============================================================== -->
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                                <div class="card border-3 border-top border-top-primary">
+                                    <div class="card-body">
+                                        <h5 class="text-muted">Sales</h5>
+                                        <div class="metric-value d-inline-block">
+                                            <h1 class="mb-1">$12099</h1>
+                                        </div>
+                                        <div class="metric-label d-inline-block float-right text-success font-weight-bold">
+                                            <span class="icon-circle-small icon-box-xs text-success bg-success-light"><i class="fa fa-fw fa-arrow-up"></i></span><span class="ml-1">5.86%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- ============================================================== -->
+                            <!-- end sales  -->
+                            <!-- ============================================================== -->
+                            <!-- ============================================================== -->
+                            <!-- new customer  -->
+                            <!-- ============================================================== -->
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                                <div class="card border-3 border-top border-top-primary">
+                                    <div class="card-body">
+                                        <h5 class="text-muted">New Customer</h5>
+                                        <div class="metric-value d-inline-block">
+                                            <h1 class="mb-1">1245</h1>
+                                        </div>
+                                        <div class="metric-label d-inline-block float-right text-success font-weight-bold">
+                                            <span class="icon-circle-small icon-box-xs text-success bg-success-light"><i class="fa fa-fw fa-arrow-up"></i></span><span class="ml-1">10%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- ============================================================== -->
+                            <!-- end new customer  -->
+                            <!-- ============================================================== -->
+                            <!-- ============================================================== -->
+                            <!-- visitor  -->
+                            <!-- ============================================================== -->
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                                <div class="card border-3 border-top border-top-primary">
+                                    <div class="card-body">
+                                        <h5 class="text-muted">Visitor</h5>
+                                        <div class="metric-value d-inline-block">
+                                            <h1 class="mb-1">13000</h1>
+                                        </div>
+                                        <div class="metric-label d-inline-block float-right text-success font-weight-bold">
+                                            <span class="icon-circle-small icon-box-xs text-success bg-success-light"><i class="fa fa-fw fa-arrow-up"></i></span><span class="ml-1">5%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- ============================================================== -->
+                            <!-- end visitor  -->
+                            <!-- ============================================================== -->
+                            <!-- ============================================================== -->
+                            <!-- total orders  -->
+                            <!-- ============================================================== -->
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                                <div class="card border-3 border-top border-top-primary">
+                                    <div class="card-body">
+                                        <h5 class="text-muted">Total Orders</h5>
+                                        <div class="metric-value d-inline-block">
+                                            <h1 class="mb-1">1340</h1>
+                                        </div>
+                                        <div class="metric-label d-inline-block float-right text-danger font-weight-bold">
+                                            <span class="icon-circle-small icon-box-xs text-danger bg-danger-light bg-danger-light "><i class="fa fa-fw fa-arrow-down"></i></span><span class="ml-1">4%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- ============================================================== -->
+                            <!-- end total orders  -->
+                            <!-- ============================================================== -->
+                        </div>
+                        <div class="row">
+                            <!-- ============================================================== -->
+                            <!-- total revenue  -->
+                            <!-- ============================================================== -->
+  
+                            
+                            <!-- ============================================================== -->
+                            <!-- ============================================================== -->
+                            <!-- category revenue  -->
+                            <!-- ============================================================== -->
+                          
+                            <!-- ============================================================== -->
+                            <!-- end category revenue  -->
+                            <!-- ============================================================== -->
+
+                          
+                        <div class="row">
+                            <div class="col-xl-5 col-lg-6 col-md-6 col-sm-12 col-12">
+                                <!-- ============================================================== -->
+                                <!-- social source  -->
+                                <!-- ============================================================== -->
+                             
+                                <!-- ============================================================== -->
+                                <!-- end social source  -->
+                                <!-- ============================================================== -->
+                            </div>
+                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12">
+                                <!-- ============================================================== -->
+                                <!-- sales traffice source  -->
+                                <!-- ============================================================== -->
+                               
+                                </div>
+                            </div>
+                          <!-- Delivery Boy Profile Modal -->
+<div id="deliveryBoyModal" class="modal" style="display: block;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1>Delivery Agent Profile</h1>
+        <button class="close" onclick="closeModal('deliveryBoyModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Phone:</strong> {{ user.phone }}</p>
+        <p><strong>Address:</strong> {{ user.address }}</p>
+  
+        <p><strong>Qualification:</strong> 
+          {% if user.qualification %}
+            <a href="{{ user.qualification.url }}" target="_blank">View Qualification</a>
+          {% else %}
+            Not Provided
+          {% endif %}
+        </p>
+  
+        <!-- Edit Button -->
+        <button class="edit-btn" onclick="openModal('editDeliveryProfileModal')">Edit Profile</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit Profile Modal -->
+  <div id="editDeliveryProfileModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1>Edit Delivery Agent Profile</h1>
+        <button class="close" onclick="closeModal('editDeliveryProfileModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'delivery_boy_profile' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" value="{{ form.username.value }}" required>
+          </div>
+          <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ form.email.value }}" required>
+          </div>
+          <div>
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" name="phone" value="{{ form.phone.value }}" required>
+          </div>
+          <div>
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" value="{{ form.address.value }}" required>
+          </div>
+          <div>
+            <label for="qualification">Qualification:</label>
+            <input type="file" id="qualification" name="qualification">
+            {% if user.qualification %}
+              <p>Current: <a href="{{ user.qualification.url }}" target="_blank">View Qualification</a></p>
+            {% endif %}
+          </div>
+  
+          <!-- Submit Button -->
+          <button type="submit" class="submit-btn">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- footer -->
+            <!-- ============================================================== -->
+          
+            <!-- ============================================================== -->
+            <!-- end footer -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- end wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- end main wrapper  -->
+    <!-- ============================================================== -->
+    <!-- Optional JavaScript -->
+    <!-- jquery 3.3.1 -->
+    <script src="{% static 'deassets/vendor/jquery/jquery-3.3.1.min.js' %}"></script>
+    <!-- bootstrap bundle js -->
+    <script src="{% static 'deassets/vendor/bootstrap/js/bootstrap.bundle.js' %}"></script>
+    <!-- slimscroll js -->
+    <script src="{% static 'deassets/vendor/slimscroll/jquery.slimscroll.js' %}"></script>
+    <!-- main js -->
+    <script src="{% static 'deassets/libs/js/main-js.js' %}"></script>
+    <!-- chart chartist js -->
+    <script src="{% static 'deassets/vendor/charts/chartist-bundle/chartist.min.js' %}"></script>
+    <!-- sparkline js -->
+    <script src="{% static 'deassets/vendor/charts/sparkline/jquery.sparkline.js' %}"></script>
+    <!-- morris js -->
+    <script src="{% static 'deassets/vendor/charts/morris-bundle/raphael.min.js' %}"></script>
+    <script src="{% static 'deassets/vendor/charts/morris-bundle/morris.js' %}"></script>
+    <!-- chart c3 js -->
+    <script src="{% static 'deassets/vendor/charts/c3charts/c3.min.js' %}"></script>
+    <script src="{% static 'deassets/vendor/charts/c3charts/d3-5.4.0.min.js' %}"></script>
+    <script src="{% static 'deassets/vendor/charts/c3charts/C3chartjs.js' %}"></script>
+    <script src="{% static 'deassets/libs/js/dashboard-ecommerce.js' %}"></script>
+    <script>
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+
+        // Save preference to localStorage
+        if (document.body.classList.contains("dark-mode")) {
+            localStorage.setItem("darkMode", "enabled");
+        } else {
+            localStorage.setItem("darkMode", "disabled");
+        }
+    }
+
+    // Check localStorage and apply dark mode if previously enabled
+    window.onload = function () {
+        if (localStorage.getItem("darkMode") === "enabled") {
+            document.body.classList.add("dark-mode");
+        }
+    };
+    </script>
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+          }
+          
+          function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+          }
+          // Function to open the modal
+function openModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = "block"; // Display the modal
+  }
+}
+
+// Function to close the modal
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = "none"; // Hide the modal
+  }
+}
+
+// Ensure modals are hidden on page load
+document.addEventListener("DOMContentLoaded", () => {
+  const modals = document.querySelectorAll(".modal");
+  modals.forEach((modal) => {
+    modal.style.display = "none"; // Hide all modals on page load
+  });
+});
+
+          
+    </script>
+</body>
+ 
+</html>

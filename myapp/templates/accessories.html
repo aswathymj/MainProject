@@ -433,6 +433,30 @@
     font-size: 14px; /* Font size for copyright text */
     color: #333; /* Text color */
 }
+.whatsapp-float {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #25D366;
+    color: white;
+    font-size: 24px;
+    padding: 15px;
+    border-radius: 50%;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+}
+  
+.whatsapp-float i {
+    color: white;
+}
+
+
+
 
   </style>
 </head>
@@ -468,7 +492,10 @@
                     <a class="nav-link" href="{% url 'feedback' %}">Feedback</a>
                     
                 </li>
-             
+                <li class="nav-item">
+                    <li><a href="{% url 'image_search' %}">Image Search</a></li>
+                    
+                </li>
                 <li class="search">
                     <input type="text" id="search-bar" class="form-control search-bar" placeholder="Search Products...">
                 </li>
@@ -491,7 +518,9 @@
                         <i class="fas fa-heart"></i> 
                     </a>
                 </li>
-            
+                <a href="https://wa.me/918304891072" target="_blank" class="whatsapp-float">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
                 
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-toggle="modal" data-target="#filterModal"><i class="fas fa-filter"></i></a>
@@ -514,6 +543,7 @@
                                 <!-- Add more service links as needed -->
                             </ul>
                         </li>
+                        
                     </ul>
                 </div>
             </div>
